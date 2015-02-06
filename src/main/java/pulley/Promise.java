@@ -1,6 +1,10 @@
 package pulley;
 
+import java.util.concurrent.Future;
+
 public interface Promise<T> extends Job<T> {
+
+	Future<T> start();
 
 	void complete(T value);
 

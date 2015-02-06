@@ -2,6 +2,11 @@ package pulley;
 
 import static pulley.Util.unexpected;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 public class CompletedPromise<T> implements Promise<T> {
 
 	private final T value;
@@ -33,6 +38,39 @@ public class CompletedPromise<T> implements Promise<T> {
 	@Override
 	public <R> Promise<T> map(Promise<R> parent, F1<? super R, T> f) {
 		return unexpected();
+	}
+
+	@Override
+	public Future<T> start() {
+		return new Future<T>() {
+
+			@Override
+			public boolean cancel(boolean mayInterruptIfRunning) {
+				return false;
+			}
+
+			@Override
+			public boolean isCancelled() {
+				return false;
+			}
+
+			@Override
+			public boolean isDone() {
+				return true;
+			}
+
+			@Override
+			public T get() throws InterruptedException, ExecutionException {
+				return value;
+			}
+
+			@Override
+			public T get(long timeout, TimeUnit unit)
+					throws InterruptedException, ExecutionException,
+					TimeoutException {
+				return value;
+			}
+		};
 	}
 
 }
