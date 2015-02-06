@@ -68,7 +68,7 @@ public class CompletedPromise<T> implements Promise<T> {
 			public T get(long timeout, TimeUnit unit)
 					throws InterruptedException, ExecutionException,
 					TimeoutException {
-				return value;
+return value;
 			}
 		};
 	}
