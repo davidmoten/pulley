@@ -8,6 +8,6 @@ public class Stream<T> {
 	}
 
 	public <R> Stream<R> map(F1<? super T, ? extends R> f) {
-
+		return null;
 	}
 }
