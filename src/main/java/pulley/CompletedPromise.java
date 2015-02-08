@@ -69,8 +69,12 @@ public class CompletedPromise<T> implements Promise<T> {
 	}
 
 	@Override
-	public <R> Promise<R> map(F1<? super T, R> f) {
-		return unexpected();
+	public <R> Promise<R> map(final F1<? super T, R> f) {
+		return new FunctionPromise<R>(new F0<R>() {
+			@Override
+			public R call() {
+				return f.call(get());
+			}
+		});
 	}
-
 }

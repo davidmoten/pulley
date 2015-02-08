@@ -46,4 +46,19 @@ public class Stream<T> {
 				return;
 		}
 	}
+
+	public T single() {
+		Optional<Cons<T>> c = promise.get();
+		final T value;
+		if (c.isPresent())
+			value = c.get().head();
+		else
+			throw new RuntimeException("expected one item but no items emitted");
+		Optional<Cons<T>> c2 = c.get().tail().promise().get();
+		if (c2.isPresent())
+			throw new RuntimeException(
+					"expected one item but more than one emitted");
+		else
+			return value;
+	}
 }
