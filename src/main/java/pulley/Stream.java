@@ -1,5 +1,6 @@
 package pulley;
 
+import static pulley.util.Optional.of;
 import pulley.util.Optional;
 
 public class Stream<T> {
@@ -25,13 +26,12 @@ public class Stream<T> {
 	}
 
 	public static <T> Stream<T> just(T t) {
-		return create(new CompletedPromise<Optional<Cons<T>>>(
-				Optional.of(new Cons<T>(t, Stream.<T> empty()))));
+		return create(CompletedPromise.create(of(Cons.create(t,
+				Stream.<T> empty()))));
 	}
 
 	public static <T> Stream<T> just(T t1, T t2) {
-		return create(new CompletedPromise<Optional<Cons<T>>>(
-				Optional.of(new Cons<T>(t1, just(t2)))));
+		return create(CompletedPromise.create(of(Cons.create(t1, just(t2)))));
 	}
 
 	public static <T> Stream<T> from(Iterable<T> iterable) {

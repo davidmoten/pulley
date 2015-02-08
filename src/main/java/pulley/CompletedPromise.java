@@ -15,6 +15,10 @@ public class CompletedPromise<T> implements Promise<T> {
 		this.value = t;
 	}
 
+	public static <T> CompletedPromise<T> create(T t) {
+		return new CompletedPromise<T>(t);
+	}
+
 	@Override
 	public void complete(T value) {
 		unexpected();
