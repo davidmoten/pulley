@@ -4,25 +4,25 @@ import static pulley.util.Optional.of;
 import pulley.util.Optional;
 
 public class Stream<T> {
-	private final Promise<Optional<Cons<T>>> promise;
+	private final PromiseFactory<Optional<Cons<T>>> factory;
 
-	private static Stream<?> EMPTY = create(new CompletedPromise<Optional<Cons<Object>>>(
+	private static Stream<?> EMPTY = create(new CompletedPromiseFactory<Optional<Cons<Object>>>(
 			Optional.<Cons<Object>> absent()));
 
-	public Stream(Promise<Optional<Cons<T>>> promise) {
-		this.promise = promise;
+	public Stream(PromiseFactory<Optional<Cons<T>>> promise) {
+		this.factory = promise;
 	}
 
-	public Promise<Optional<Cons<T>>> promise() {
-		return promise;
+	public PromiseFactory<Optional<Cons<T>>> promiseFactory() {
+		return factory;
 	}
 
-	public static <T> Stream<T> create(Promise<Optional<Cons<T>>> promise) {
-		return new Stream<T>(promise);
+	public static <T> Stream<T> create(PromiseFactory<Optional<Cons<T>>> factory) {
+		return new Stream<T>(factory);
 	}
 
 	public <R> Stream<R> map(F1<? super T, ? extends R> f) {
-		return new Stream<R>(promise.map(F.optional(F.cons(f))));
+		return new Stream<R>(factory.map(F.optional(F.cons(f))));
 	}
 
 	public static <T> Stream<T> just(T t) {
@@ -45,7 +45,7 @@ public class Stream<T> {
 	}
 
 	public void forEach(A1<? super T> action) {
-		Promise<Optional<Cons<T>>> p = promise;
+		Promise<Optional<Cons<T>>> p = factory;
 		while (true) {
 			p.start();
 			Optional<Cons<T>> value = p.get();
@@ -58,7 +58,7 @@ public class Stream<T> {
 	}
 
 	public T single() {
-		Optional<Cons<T>> c = promise.get();
+		Optional<Cons<T>> c = factory.get();
 		final T value;
 		if (c.isPresent())
 			value = c.get().head();
