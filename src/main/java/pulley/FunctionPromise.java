@@ -7,7 +7,6 @@ public class FunctionPromise<T> implements Promise<T> {
 
 	private final F0<T> f;
 	private final AtomicBoolean completed = new AtomicBoolean();
-	private volatile T value;
 
 	public FunctionPromise(F0<T> f) {
 		this.f = f;
@@ -15,7 +14,7 @@ public class FunctionPromise<T> implements Promise<T> {
 
 	@Override
 	public Future<T> start() {
-		// TODO Auto-generated method stub
+		completed.set(false);
 		return null;
 	}
 
@@ -37,15 +36,20 @@ public class FunctionPromise<T> implements Promise<T> {
 
 	@Override
 	public T get() {
-		if (completed.compareAndSet(false, true))
-			value = f.call();
+		T value = f.call();
+		completed.set(true);
 		return value;
 	}
 
 	@Override
-	public <R> Promise<R> map(F1<? super T, R> f) {
-		// TODO Auto-generated method stub
-		return null;
+	public <R> Promise<R> map(final F1<? super T, R> g) {
+		return new FunctionPromise<R>(new F0<R>() {
+			@Override
+			public R call() {
+				return g.call(get());
+			}
+		});
+
 	}
 
 }

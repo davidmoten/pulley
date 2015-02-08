@@ -61,4 +61,5 @@ public class Stream<T> {
 		else
 			return value;
 	}
+
 }
