@@ -14,7 +14,7 @@ public interface Promise<T> extends Job<T> {
 
 	T get();
 
-	<R> Promise<T> map(Promise<R> parent, F1<? super R, T> f);
+	<R> Promise<R> map(F1<? super T, R> f);
 
 	// static Promise<T> create(T t);
 }

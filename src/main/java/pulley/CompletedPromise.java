@@ -36,11 +36,6 @@ public class CompletedPromise<T> implements Promise<T> {
 	}
 
 	@Override
-	public <R> Promise<T> map(Promise<R> parent, F1<? super R, T> f) {
-		return unexpected();
-	}
-
-	@Override
 	public Future<T> start() {
 		return new Future<T>() {
 
@@ -68,9 +63,14 @@ public class CompletedPromise<T> implements Promise<T> {
 			public T get(long timeout, TimeUnit unit)
 					throws InterruptedException, ExecutionException,
 					TimeoutException {
-return value;
+				return value;
 			}
 		};
+	}
+
+	@Override
+	public <R> Promise<R> map(F1<? super T, R> f) {
+		return unexpected();
 	}
 
 }
