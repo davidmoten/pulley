@@ -14,7 +14,7 @@ public class FunctionPromise<T> implements Promise<T> {
 	}
 
 	@Override
-	public Future start() {
+	public Future<T> start() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -43,7 +43,7 @@ public class FunctionPromise<T> implements Promise<T> {
 	}
 
 	@Override
-	public Promise<T> map(F1 f) {
+	public <R> Promise<R> map(F1<? super T, R> f) {
 		// TODO Auto-generated method stub
 		return null;
 	}
