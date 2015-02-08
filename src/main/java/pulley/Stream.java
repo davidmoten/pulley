@@ -12,6 +12,10 @@ public class Stream<T> {
 		this.promise = promise;
 	}
 
+	public Promise<Optional<Cons<T>>> promise() {
+		return promise;
+	}
+
 	public static <T> Stream<T> create(Promise<Optional<Cons<T>>> promise) {
 		return new Stream<T>(promise);
 	}
@@ -30,15 +34,16 @@ public class Stream<T> {
 		return (Stream<T>) EMPTY;
 	}
 
-	public void forEasch(A1<T> action) {
+	public void forEach(A1<? super T> action) {
 		Promise<Optional<Cons<T>>> p = promise;
-		boolean keepGoing = true;
-		while (keepGoing) {
+		while (true) {
 			p.start();
 			Optional<Cons<T>> value = p.get();
 			if (value.isPresent()) {
 				action.call(value.get().head());
-			}
+				p = p.get().get().tail().promise();
+			} else
+				return;
 		}
 	}
 }
