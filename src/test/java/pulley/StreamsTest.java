@@ -14,13 +14,26 @@ public class StreamsTest {
 
 	@Test
 	public void testMap() {
-		int n = Stream.just(1).map(new F1<Integer, Integer>() {
+		assertEquals(2, (int) Stream.just(1).map(plusOne()).single());
+	}
+
+	private static F1<Integer, Integer> plusOne() {
+		return new F1<Integer, Integer>() {
 			@Override
 			public Integer call(Integer t) {
 				return t + 1;
 			}
-		}).single();
-		assertEquals(2, n);
+		};
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void testSingleFailsWithTwoItems() {
+		Stream.just(1, 2).single();
+	}
+
+	@Test
+	public void testSingle() {
+		assertEquals(1, (int) Stream.just(1).single());
 	}
 
 }

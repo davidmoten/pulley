@@ -29,6 +29,16 @@ public class Stream<T> {
 				Optional.of(new Cons<T>(t, Stream.<T> empty()))));
 	}
 
+	public static <T> Stream<T> just(T t1, T t2) {
+		return create(new CompletedPromise<Optional<Cons<T>>>(
+				Optional.of(new Cons<T>(t1, just(t2)))));
+	}
+
+	public static <T> Stream<T> from(Iterable<T> iterable) {
+		// TODO
+		return null;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static <T> Stream<T> empty() {
 		return (Stream<T>) EMPTY;
