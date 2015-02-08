@@ -1,9 +1,12 @@
 package pulley;
 
-import com.google.common.base.Optional;
+import pulley.util.Optional;
 
 public class Stream<T> {
 	private final Promise<Optional<Cons<T>>> promise;
+
+	private static Stream<?> EMPTY = create(new CompletedPromise<Optional<Cons<Object>>>(
+			Optional.<Cons<Object>> absent()));
 
 	public Stream(Promise<Optional<Cons<T>>> promise) {
 		this.promise = promise;
@@ -22,13 +25,20 @@ public class Stream<T> {
 				Optional.of(new Cons<T>(t, Stream.<T> empty()))));
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> Stream<T> empty() {
-		return create(new CompletedPromise<Optional<Cons<T>>>(
-				Optional.<Cons<T>> absent()));
+		return (Stream<T>) EMPTY;
 	}
 
-	public void forEach(A1<T> action) {
-		// TODO
-		promise.start();
+	public void forEasch(A1<T> action) {
+		Promise<Optional<Cons<T>>> p = promise;
+		boolean keepGoing = true;
+		while (keepGoing) {
+			p.start();
+			Optional<Cons<T>> value = p.get();
+			if (value.isPresent()) {
+				action.call(value.get().head());
+			}
+		}
 	}
 }

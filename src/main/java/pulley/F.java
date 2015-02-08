@@ -1,6 +1,6 @@
 package pulley;
 
-import com.google.common.base.Optional;
+import pulley.util.Optional;
 
 public final class F {
 
