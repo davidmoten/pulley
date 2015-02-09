@@ -28,8 +28,14 @@ public class Stream<T> {
                     public Optional<Cons<R>> get() {
                         return g.call(p.get());
                     }
+
+                    @Override
+                    public A0 closeAction() {
+                        return p.closeAction();
+                    }
                 };
             }
+
         };
         return stream(factory2);
     }
@@ -47,7 +53,7 @@ public class Stream<T> {
     }
 
     public void forEach() {
-        forEach(Actions.doNothing());
+        forEach(Actions.doNothing1());
     }
 
     public T single() {

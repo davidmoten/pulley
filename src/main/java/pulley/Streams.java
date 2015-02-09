@@ -22,6 +22,11 @@ public class Streams {
         public Optional<Cons<?>> get() {
             return absent();
         }
+
+        @Override
+        public A0 closeAction() {
+            return Actions.doNothing0();
+        }
     };
 
     public static <T> Stream<T> just(T t) {
@@ -77,6 +82,10 @@ public class Streams {
                 return Optional.of(cons(m, new RangePromise(n, maxValue)));
         }
 
+        @Override
+        public A0 closeAction() {
+            return Actions.doNothing0();
+        }
     }
 
 }

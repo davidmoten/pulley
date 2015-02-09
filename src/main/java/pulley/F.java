@@ -40,6 +40,11 @@ public final class F {
                     else
                         return Optional.of(Transformer.this.call(value.get()));
                 }
+
+                @Override
+                public A0 closeAction() {
+                    return Actions.doNothing0();
+                }
             };
             return Cons.cons(f.call(c.head()), p);
         }

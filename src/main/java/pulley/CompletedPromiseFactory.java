@@ -26,6 +26,11 @@ public class CompletedPromiseFactory<T> implements Factory<Promise<T>> {
             return value;
         }
 
+        @Override
+        public A0 closeAction() {
+            return Actions.doNothing0();
+        }
+
     }
 
 }
