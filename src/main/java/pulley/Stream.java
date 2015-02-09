@@ -47,8 +47,10 @@ public class Stream<T> {
             if (value.isPresent()) {
                 action.call(value.get().head());
                 p = value.get().tail();
-            } else
+            } else {
+                p.closeAction().call();
                 return;
+            }
         }
     }
 
