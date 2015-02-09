@@ -2,15 +2,30 @@ package pulley;
 
 public class CompletedPromiseFactory<T> implements Factory<Promise<T>> {
 
-	private final T t;
+    private final T t;
 
-	public CompletedPromiseFactory(T t) {
-		this.t = t;
-	}
+    public CompletedPromiseFactory(T t) {
+        this.t = t;
+    }
 
-	@Override
-	public Promise<T> create() {
-		return Promises.completedPromise(t);
-	}
+    @Override
+    public Promise<T> create() {
+        return new CompletedPromise<T>(t);
+    }
+
+    private static class CompletedPromise<T> implements Promise<T> {
+
+        private final T value;
+
+        public CompletedPromise(T t) {
+            this.value = t;
+        }
+
+        @Override
+        public T get() {
+            return value;
+        }
+
+    }
 
 }
