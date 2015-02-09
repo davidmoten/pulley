@@ -1,6 +1,5 @@
 package pulley;
 
-import static pulley.CompletedPromise.completedPromise;
 import pulley.util.Optional;
 
 public class PromiseFactories {
@@ -12,10 +11,16 @@ public class PromiseFactories {
 
 			@Override
 			public Promise<Optional<Cons<R>>> create() {
-				return completedPromise(F.optional(F.cons(f)).call(
-						factory.create().get()));
+				return new FunctionPromise<Optional<Cons<R>>>(
+						new F0<Optional<Cons<R>>>() {
+
+							@Override
+							public Optional<Cons<R>> call() {
+								return F.optional(F.cons(f)).call(
+										factory.create().get());
+							}
+						});
 			}
 		};
 	}
-
 }

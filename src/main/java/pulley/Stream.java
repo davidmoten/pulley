@@ -1,7 +1,7 @@
 package pulley;
 
-import static pulley.CompletedPromiseFactory.completedPromiseFactory;
 import static pulley.Cons.cons;
+import static pulley.Promises.completedPromiseFactory;
 import static pulley.util.Optional.of;
 import pulley.util.Optional;
 
@@ -24,7 +24,7 @@ public class Stream<T> {
 	}
 
 	public <R> Stream<R> map(F1<? super T, ? extends R> f) {
-		return new Stream<R>(PromiseFactories.map(factory, f));
+		return stream(PromiseFactories.map(factory, f));
 	}
 
 	public static <T> Stream<T> just(T t) {
@@ -48,7 +48,6 @@ public class Stream<T> {
 	public void forEach(A1<? super T> action) {
 		Promise<Optional<Cons<T>>> p = factory.create();
 		while (true) {
-			p.start();
 			Optional<Cons<T>> value = p.get();
 			if (value.isPresent()) {
 				action.call(value.get().head());

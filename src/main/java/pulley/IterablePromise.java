@@ -1,7 +1,6 @@
 package pulley;
 
 import java.util.Iterator;
-import java.util.concurrent.Future;
 
 public class IterablePromise<T> implements Promise<T> {
 
@@ -9,12 +8,6 @@ public class IterablePromise<T> implements Promise<T> {
 
 	public IterablePromise(Iterator<T> iterator) {
 		this.iterator = iterator;
-	}
-
-	@Override
-	public Future<T> start() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -30,20 +23,8 @@ public class IterablePromise<T> implements Promise<T> {
 	}
 
 	@Override
-	public void failure(Throwable t) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public T get() {
 		return iterator.next();
-	}
-
-	@Override
-	public <R> Promise<R> map(F1<? super T, R> f) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
