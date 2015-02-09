@@ -9,7 +9,7 @@ public class Cons<T> {
 		this.tail = tail;
 	}
 
-	public static <T> Cons<T> create(T head, Stream<T> tail) {
+	public static <T> Cons<T> cons(T head, Stream<T> tail) {
 		return new Cons<T>(head, tail);
 	}
 

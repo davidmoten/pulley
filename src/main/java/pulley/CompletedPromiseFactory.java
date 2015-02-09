@@ -8,9 +8,13 @@ public class CompletedPromiseFactory<T> implements PromiseFactory<T> {
 		this.t = t;
 	}
 
+	public static <T> CompletedPromiseFactory<T> completedPromiseFactory(T t) {
+		return new CompletedPromiseFactory<T>(t);
+	}
+
 	@Override
 	public Promise<T> create() {
-		return CompletedPromise.create(t);
+		return CompletedPromise.completedPromise(t);
 	}
 
 }

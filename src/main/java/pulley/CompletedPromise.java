@@ -15,7 +15,7 @@ public class CompletedPromise<T> implements Promise<T> {
 		this.value = t;
 	}
 
-	public static <T> CompletedPromise<T> create(T t) {
+	public static <T> CompletedPromise<T> completedPromise(T t) {
 		return new CompletedPromise<T>(t);
 	}
 
