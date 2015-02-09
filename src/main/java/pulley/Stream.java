@@ -6,6 +6,7 @@ import static pulley.util.Optional.absent;
 import static pulley.util.Optional.of;
 
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import pulley.util.Optional;
 
@@ -75,6 +76,38 @@ public class Stream<T> {
         return (Stream<T>) EMPTY;
     }
 
+    public static Stream<Integer> range(final int start, final int count) {
+        Factory<Promise<Optional<Cons<Integer>>>> factory = new Factory<Promise<Optional<Cons<Integer>>>>() {
+
+            @Override
+            public Promise<Optional<Cons<Integer>>> create() {
+                return new RangePromise(new AtomicInteger(start), start + count);
+            }
+        };
+        return stream(factory);
+    }
+
+    private static class RangePromise implements Promise<Optional<Cons<Integer>>> {
+
+        private final AtomicInteger n;
+        private final int maxValue;
+
+        RangePromise(AtomicInteger n, int maxValue) {
+            this.n = n;
+            this.maxValue = maxValue;
+        }
+
+        @Override
+        public Optional<Cons<Integer>> get() {
+            int m = n.getAndIncrement();
+            if (m >= maxValue)
+                return Optional.absent();
+            else
+                return Optional.of(cons(m, new RangePromise(n, maxValue)));
+        }
+
+    }
+
     public void forEach(A1<? super T> action) {
         Promise<Optional<Cons<T>>> p = factory.create();
         while (true) {
@@ -85,6 +118,10 @@ public class Stream<T> {
             } else
                 return;
         }
+    }
+
+    public void forEach() {
+        forEach(Actions.nothing());
     }
 
     public T single() {
