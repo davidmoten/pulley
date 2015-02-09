@@ -2,9 +2,12 @@ package pulley;
 
 import static pulley.Cons.cons;
 import static pulley.Promises.completedPromiseFactory;
+import static pulley.util.Optional.absent;
+import static pulley.util.Optional.of;
+
+import java.util.Arrays;
+
 import pulley.util.Optional;
-import static pulley.Promises.*;
-import static pulley.util.Optional.*;
 
 public class Stream<T> {
     private final Factory<Promise<Optional<Cons<T>>>> factory;
@@ -58,14 +61,13 @@ public class Stream<T> {
         return (Promise<Optional<Cons<T>>>) ((Promise<?>) EMPTY_PROMISE);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> Stream<T> just(T t1, T t2) {
-        // return stream(completedPromiseFactory(of(cons(t1, just(t2)))));
-        return null;
+        return from(Arrays.asList(t1, t2));
     }
 
     public static <T> Stream<T> from(Iterable<T> iterable) {
-        // return stream(new IterablePromiseFactory<T>(iterable));
-        return null;
+        return stream(new IterablePromiseFactory<T>(iterable));
     }
 
     @SuppressWarnings("unchecked")

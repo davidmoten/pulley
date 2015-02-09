@@ -17,27 +17,32 @@ public final class F {
     }
 
     public static <T, R> F1<Cons<T>, Cons<R>> cons(final F1<? super T, ? extends R> f) {
-        return new F1<Cons<T>, Cons<R>>() {
-            @Override
-            public Cons<R> call(final Cons<T> c) {
-                Promise<Optional<Cons<R>>> p = map(f, c, this);
-                return Cons.cons(f.call(c.head()), p);
-            }
-        };
+        return new Transformer<T, R>(f);
     }
 
-    private static <T, R> Promise<Optional<Cons<R>>> map(final F1<? super T, ? extends R> f,
-            final Cons<T> c) {
-        return new Promise<Optional<Cons<R>>>() {
+    private static class Transformer<T, R> implements F1<Cons<T>, Cons<R>> {
 
-            @Override
-            public Optional<Cons<R>> get() {
-                Optional<Cons<T>> value = c.tail().get();
-                if (value.isPresent())
-                    return Optional.absent();
-                else
-                    return Optional.of(Cons.cons(f.call(value.get().head()), null));
-            }
-        };
+        private final F1<? super T, ? extends R> f;
+
+        Transformer(F1<? super T, ? extends R> f) {
+            this.f = f;
+        }
+
+        @Override
+        public Cons<R> call(final Cons<T> c) {
+            Promise<Optional<Cons<R>>> p = new Promise<Optional<Cons<R>>>() {
+
+                @Override
+                public Optional<Cons<R>> get() {
+                    Optional<Cons<T>> value = c.tail().get();
+                    if (!value.isPresent())
+                        return Optional.absent();
+                    else
+                        return Optional.of(Transformer.this.call(value.get()));
+                }
+            };
+            return Cons.cons(f.call(c.head()), p);
+        }
     }
+
 }
