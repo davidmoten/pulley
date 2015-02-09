@@ -1,6 +1,6 @@
 package pulley;
 
-public class CompletedPromiseFactory<T> implements PromiseFactory<T> {
+public class CompletedPromiseFactory<T> implements Factory<Promise<T>> {
 
 	private final T t;
 

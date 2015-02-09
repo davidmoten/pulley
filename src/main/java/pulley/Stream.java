@@ -1,47 +1,55 @@
 package pulley;
 
-import static pulley.Cons.cons;
 import static pulley.Promises.completedPromiseFactory;
-import static pulley.util.Optional.of;
 import pulley.util.Optional;
 
 public class Stream<T> {
-	private final PromiseFactory<Optional<Cons<T>>> factory;
+	private final Factory<Promise<Optional<Cons<T>>>> factory;
 
 	private static Stream<?> EMPTY = stream(completedPromiseFactory(Optional
 			.<Cons<Object>> absent()));
 
-	public Stream(PromiseFactory<Optional<Cons<T>>> promise) {
-		this.factory = promise;
+	public Stream(Factory<Promise<Optional<Cons<T>>>> factory) {
+		this.factory = factory;
 	}
 
-	public PromiseFactory<Optional<Cons<T>>> factory() {
+	public Factory<Promise<Optional<Cons<T>>>> factory() {
 		return factory;
 	}
 
-	public static <T> Stream<T> stream(PromiseFactory<Optional<Cons<T>>> factory) {
+	public static <T> Stream<T> stream(
+			Factory<Promise<Optional<Cons<T>>>> factory) {
 		return new Stream<T>(factory);
 	}
 
 	public <R> Stream<R> map(F1<? super T, ? extends R> f) {
-		return stream(PromiseFactories.map(factory, f));
+		// TODO
+		return null;
 	}
 
 	public static <T> Stream<T> just(T t) {
-		return stream(completedPromiseFactory(of(cons(t, Stream.<T> empty()))));
+		// return stream(completedPromiseFactory(of(cons(t, Stream.<T>
+		// empty()))));
+		return null;
 	}
 
 	public static <T> Stream<T> just(T t1, T t2) {
-		return stream(completedPromiseFactory(of(cons(t1, just(t2)))));
+		// return stream(completedPromiseFactory(of(cons(t1, just(t2)))));
+		return null;
 	}
 
 	public static <T> Stream<T> from(Iterable<T> iterable) {
-		return stream(new IterablePromiseFactory<T>(iterable));
+		// return stream(new IterablePromiseFactory<T>(iterable));
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> Stream<T> empty() {
 		return (Stream<T>) EMPTY;
+	}
+
+	public static <T> Promise<T> emptyPromise() {
+		return Promises.completedPromise(Optional.<Cons<T>> absent());
 	}
 
 	public void forEach(A1<? super T> action) {
@@ -63,7 +71,7 @@ public class Stream<T> {
 			value = c.get().head();
 		else
 			throw new RuntimeException("expected one item but no items emitted");
-		Optional<Cons<T>> c2 = c.get().tail().factory().create().get();
+		Optional<Cons<T>> c2 = c.get().tail().get();
 		if (c2.isPresent())
 			throw new RuntimeException(
 					"expected one item but more than one emitted");

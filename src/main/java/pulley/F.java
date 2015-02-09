@@ -22,7 +22,8 @@ public final class F {
 		return new F1<Cons<T>, Cons<R>>() {
 			@Override
 			public Cons<R> call(Cons<T> c) {
-				return new Cons<R>(f.call(c.head()), c.tail().map(f));
+				// return new Cons<R>(f.call(c.head()), c.tail().map(f));
+				return null;
 			}
 		};
 	}

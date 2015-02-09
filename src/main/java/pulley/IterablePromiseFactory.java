@@ -10,7 +10,7 @@ import java.util.Iterator;
 import pulley.util.Optional;
 
 public class IterablePromiseFactory<T> implements
-		PromiseFactory<Optional<Cons<T>>> {
+		Factory<Promise<Optional<Cons<T>>>> {
 
 	private final Iterable<T> iterable;
 
@@ -19,17 +19,17 @@ public class IterablePromiseFactory<T> implements
 	}
 
 	@Override
-	public Promise<Optional<Cons<T>>> create() {
+	public Factory<Promise<Optional<Cons<T>>>> create() {
 		return createPromiseFactory(iterable.iterator()).create();
 	}
 
-	private PromiseFactory<Optional<Cons<T>>> createPromiseFactory(
+	private Factory<Promise<Optional<Cons<T>>>> createPromiseFactory(
 			final Iterator<T> it) {
 		return new IteratorPromiseFactory<T>(it);
 	}
 
 	private static class IteratorPromiseFactory<T> implements
-			PromiseFactory<Optional<Cons<T>>> {
+			Factory<Promise<Optional<Cons<T>>>> {
 		private final Iterator<T> iterator;
 
 		IteratorPromiseFactory(Iterator<T> iterator) {
