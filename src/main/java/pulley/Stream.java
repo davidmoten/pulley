@@ -47,7 +47,7 @@ public class Stream<T> {
     }
 
     public void forEach() {
-        forEach(Actions.nothing());
+        forEach(Actions.doNothing());
     }
 
     public T single() {

@@ -11,7 +11,7 @@ public class Actions {
         };
     }
 
-    public static A1<Object> nothing() {
+    public static A1<Object> doNothing() {
         return new A1<Object>() {
             @Override
             public void call(Object t) {
