@@ -1,11 +1,11 @@
 package pulley;
 
 import static pulley.Cons.cons;
-import static pulley.Stream.stream;
 import static pulley.util.Optional.absent;
 import static pulley.util.Optional.of;
 
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.util.Optional;
 
@@ -19,7 +19,7 @@ public class IterablePromiseFactory<T> implements
 	}
 
 	@Override
-	public Factory<Promise<Optional<Cons<T>>>> create() {
+	public Promise<Optional<Cons<T>>> create() {
 		return createPromiseFactory(iterable.iterator()).create();
 	}
 
@@ -38,17 +38,19 @@ public class IterablePromiseFactory<T> implements
 
 		@Override
 		public Promise<Optional<Cons<T>>> create() {
-			return new FunctionPromise<Optional<Cons<T>>>(
+			final AtomicReference<FunctionPromise<Optional<Cons<T>>>> ref = new AtomicReference<FunctionPromise<Optional<Cons<T>>>>();
+			ref.set(new FunctionPromise<Optional<Cons<T>>>(
 					new F0<Optional<Cons<T>>>() {
 						@Override
 						public Optional<Cons<T>> call() {
 							if (iterator.hasNext()) {
-								return of(cons(iterator.next(),
-										stream(IteratorPromiseFactory.this)));
+								return of(cons(iterator.next(), ref.get()));
 							} else
 								return absent();
 						}
-					});
+					}));
+			return ref.get();
 		}
 	}
+
 }
