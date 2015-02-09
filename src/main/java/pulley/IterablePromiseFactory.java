@@ -18,30 +18,37 @@ public class IterablePromiseFactory<T> implements
 		this.iterable = iterable;
 	}
 
-	private PromiseFactory<Optional<Cons<T>>> createPromiseFactory(
-			final Iterator<T> it) {
-		return new PromiseFactory<Optional<Cons<T>>>() {
-
-			@Override
-			public Promise<Optional<Cons<T>>> create() {
-				return new FunctionPromise<Optional<Cons<T>>>(
-						new F0<Optional<Cons<T>>>() {
-							@Override
-							public Optional<Cons<T>> call() {
-								if (it.hasNext()) {
-									return of(cons(it.next(),
-											stream(createPromiseFactory(it))));
-								} else
-									return absent();
-							}
-						});
-			}
-		};
-	}
-
 	@Override
 	public Promise<Optional<Cons<T>>> create() {
 		return createPromiseFactory(iterable.iterator()).create();
 	}
 
+	private PromiseFactory<Optional<Cons<T>>> createPromiseFactory(
+			final Iterator<T> it) {
+		return new IteratorPromiseFactory<T>(it);
+	}
+
+	private static class IteratorPromiseFactory<T> implements
+			PromiseFactory<Optional<Cons<T>>> {
+		private final Iterator<T> iterator;
+
+		IteratorPromiseFactory(Iterator<T> iterator) {
+			this.iterator = iterator;
+		}
+
+		@Override
+		public Promise<Optional<Cons<T>>> create() {
+			return new FunctionPromise<Optional<Cons<T>>>(
+					new F0<Optional<Cons<T>>>() {
+						@Override
+						public Optional<Cons<T>> call() {
+							if (iterator.hasNext()) {
+								return of(cons(iterator.next(),
+										stream(IteratorPromiseFactory.this)));
+							} else
+								return absent();
+						}
+					});
+		}
+	}
 }
