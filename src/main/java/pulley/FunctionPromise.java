@@ -13,7 +13,7 @@ public class FunctionPromise<T> implements Promise<T> {
 
 	@Override
 	public void complete(Object value) {
-		// TODO
+		Util.unexpected();
 	}
 
 	@Override

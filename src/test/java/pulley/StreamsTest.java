@@ -3,6 +3,8 @@ package pulley;
 import static org.junit.Assert.assertEquals;
 import static pulley.Actions.println;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 public class StreamsTest {
@@ -34,6 +36,16 @@ public class StreamsTest {
 	@Test
 	public void testSingle() {
 		assertEquals(1, (int) Stream.just(1).single());
+	}
+
+	@Test
+	public void testTwoPrinted() {
+		Stream.just(3, 4).forEach(println());
+	}
+
+	@Test
+	public void testIterable() {
+		Stream.from(Arrays.asList(1, 2)).forEach(println());
 	}
 
 }

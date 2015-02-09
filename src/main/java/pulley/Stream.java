@@ -36,8 +36,7 @@ public class Stream<T> {
 	}
 
 	public static <T> Stream<T> from(Iterable<T> iterable) {
-		// TODO
-		return null;
+		return stream(new IterablePromiseFactory<T>(iterable));
 	}
 
 	@SuppressWarnings("unchecked")
