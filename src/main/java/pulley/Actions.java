@@ -43,6 +43,17 @@ public class Actions {
 		};
 	}
 
+	public static A0 sequence(final A0 action1, final A0 action2) {
+		return new A0() {
+
+			@Override
+			public void call() {
+				action1.call();
+				action2.call();
+			}
+		};
+	}
+
 	public static A0 doNothing0() {
 		return new A0() {
 			@Override

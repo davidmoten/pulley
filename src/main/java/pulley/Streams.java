@@ -9,6 +9,7 @@ import static pulley.util.Optional.of;
 import java.util.Arrays;
 
 import pulley.streams.FromIterable;
+import pulley.streams.Merge;
 import pulley.streams.Range;
 import pulley.util.Optional;
 
@@ -27,6 +28,11 @@ public class Streams {
 		@Override
 		public A0 closeAction() {
 			return Actions.doNothing0();
+		}
+
+		@Override
+		public Scheduler scheduler() {
+			return Schedulers.immediate();
 		}
 	};
 
@@ -47,6 +53,10 @@ public class Streams {
 
 	public static <T> Stream<T> from(Iterable<T> iterable) {
 		return FromIterable.create(iterable);
+	}
+
+	public static <T> Stream<T> merge(Stream<T> s1, Stream<T> s2) {
+		return Merge.create(s1, s2);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -10,6 +10,8 @@ import pulley.Actions;
 import pulley.Cons;
 import pulley.Factory;
 import pulley.Promise;
+import pulley.Scheduler;
+import pulley.Schedulers;
 import pulley.Stream;
 import pulley.util.Optional;
 
@@ -49,6 +51,11 @@ public class Range {
 		@Override
 		public A0 closeAction() {
 			return Actions.doNothing0();
+		}
+
+		@Override
+		public Scheduler scheduler() {
+			return Schedulers.immediate();
 		}
 	}
 }
