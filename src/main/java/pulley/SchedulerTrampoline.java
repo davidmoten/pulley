@@ -2,22 +2,20 @@ package pulley;
 
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SchedulerTrampoline implements Scheduler {
 
 	private final Deque<A0> queue = new ConcurrentLinkedDeque<A0>();
-	private final AtomicBoolean wip = new AtomicBoolean(false);
+	private final AtomicInteger wip = new AtomicInteger(0);
 
 	@Override
 	public void schedule(A0 action) {
 		queue.add(action);
-		if (wip.compareAndSet(false, true)) {
-			drainQueue();
-			wip.set(false);
-			// to cover race condition where just prior to the wip being set to
-			// false an action is added to the queue in another thread
-			drainQueue();
+		if (wip.getAndIncrement() == 0) {
+			do {
+				drainQueue();
+			} while (wip.decrementAndGet() > 0);
 		}
 	}
 

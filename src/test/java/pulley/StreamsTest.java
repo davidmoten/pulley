@@ -54,9 +54,27 @@ public class StreamsTest {
 	}
 
 	@Test
-	public void testScheduler() {
-		Schedulers.trampoline().schedule(Actions.println("hello"));
-		Schedulers.trampoline().schedule(Actions.println("world"));
+	public void testTrampoline() {
+		Scheduler s = Schedulers.trampoline();
+		s.schedule(Actions.info("hello"));
+		s.schedule(Actions.info("world"));
+		s.schedule(Actions.info("from trampoline"));
+	}
+
+	@Test
+	public void testImmediate() {
+		Scheduler s = Schedulers.immediate();
+		s.schedule(Actions.info("hello"));
+		s.schedule(Actions.info("world"));
+		s.schedule(Actions.info("from immediate"));
+	}
+
+	@Test
+	public void testComputation() {
+		Scheduler s = Schedulers.computation();
+		s.schedule(Actions.info("hello"));
+		s.schedule(Actions.info("world"));
+		s.schedule(Actions.info("from computation"));
 	}
 
 }

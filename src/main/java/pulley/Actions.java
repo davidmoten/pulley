@@ -1,6 +1,11 @@
 package pulley;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Actions {
+
+	private static final Logger log = LoggerFactory.getLogger(Actions.class);
 
 	public static A1<Object> println() {
 		return new A1<Object>() {
@@ -16,6 +21,15 @@ public class Actions {
 			@Override
 			public void call() {
 				System.out.println(s);
+			}
+		};
+	}
+
+	public static A0 info(final String s) {
+		return new A0() {
+			@Override
+			public void call() {
+				log.info(s);
 			}
 		};
 	}
