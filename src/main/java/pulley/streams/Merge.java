@@ -2,12 +2,15 @@ package pulley.streams;
 
 import static pulley.Stream.stream;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.A0;
-import pulley.Actions;
+import pulley.CachingPromise;
 import pulley.Cons;
 import pulley.Factory;
 import pulley.Promise;
@@ -17,18 +20,21 @@ import pulley.Stream;
 import pulley.util.Optional;
 
 public class Merge {
-    public static <T> Stream<T> create(Stream<T> s1, Stream<T> s2) {
-        return stream(factory(s1, s2));
+
+    public static <T> Stream<T> create(final List<Stream<T>> list) {
+        return stream(factory(list));
     }
 
-    private static <T> Factory<Promise<Optional<Cons<T>>>> factory(final Stream<T> s1,
-            final Stream<T> s2) {
+    private static <T> Factory<Promise<Optional<Cons<T>>>> factory(final List<Stream<T>> streams) {
         return new Factory<Promise<Optional<Cons<T>>>>() {
             @Override
             public Promise<Optional<Cons<T>>> create() {
-                Promise<Optional<Cons<T>>> p1 = s1.factory().create();
-                Promise<Optional<Cons<T>>> p2 = s2.factory().create();
-                return new MergePromise<T>(p1, p2);
+                List<Promise<Optional<Cons<T>>>> promises = new ArrayList<Promise<Optional<Cons<T>>>>(
+                        streams.size());
+                for (Stream<T> stream : streams) {
+                    promises.add(stream.factory().create());
+                }
+                return new MergePromise<T>(promises);
             }
         };
     }
@@ -44,31 +50,43 @@ public class Merge {
         @Override
         public Optional<Cons<T>> get() {
             // blocking !!!!
-            final AtomicReference<Byte> which = new AtomicReference<Byte>((byte) 0);
-            final AtomicReference<Optional<Cons<T>>> ref = new AtomicReference<Optional<Cons<T>>>();
+            final List<Promise<Optional<Cons<T>>>> promises2 = new ArrayList<Promise<Optional<Cons<T>>>>(
+                    promises);
+            final AtomicBoolean found = new AtomicBoolean(false);
+            final AtomicReference<Optional<Cons<T>>> value = new AtomicReference<Optional<Cons<T>>>();
             final CountDownLatch latch = new CountDownLatch(1);
-            p1.scheduler().schedule(new A0() {
-                @Override
-                public void call() {
-                    Optional<Cons<T>> value = p1.get();
-                    if (which.compareAndSet((byte) 0, (byte) 1)) {
-                        ref.set(value);
-                        latch.countDown();
+            final AtomicInteger countTerminated = new AtomicInteger(0);
+
+            for (int i = 0; i < promises.size(); i++) {
+                final int index = i;
+                promises.get(index).scheduler().schedule(new A0() {
+                    @Override
+                    public void call() {
+                        if (!found.get()) {
+                            if (!(promises2.get(index) instanceof CachingPromise))
+                                promises2.set(index, new CachingPromise<Optional<Cons<T>>>(
+                                        promises2.get(index)));
+                            Optional<Cons<T>> t = promises2.get(index).get();
+                            if (t.isPresent() && found.compareAndSet(false, true)) {
+                                value.set(t);
+                                promises2.set(index, t.get().tail());
+                                latch.countDown();
+                            } else if (!t.isPresent()) {
+                                if (countTerminated.incrementAndGet() == promises.size()) {
+                                    latch.countDown();
+                                }
+                            }
+                        }
                     }
-                }
-            });
-            p2.scheduler().schedule(new A0() {
-                @Override
-                public void call() {
-                    Optional<Cons<T>> value = p2.get();
-                    if (which.compareAndSet((byte) 0, (byte) 2)) {
-                        ref.set(value);
-                        latch.countDown();
-                    }
-                }
-            });
+                });
+            }
             try {
                 latch.await();
+                if (countTerminated.get() == promises.size())
+                    return Optional.absent();
+                else
+                    return Optional.of(Cons.cons(value.get().get().head(), new MergePromise<T>(
+                            promises2)));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -76,7 +94,13 @@ public class Merge {
 
         @Override
         public A0 closeAction() {
-            return Actions.sequence(p1.closeAction(), p2.closeAction());
+            return new A0() {
+                @Override
+                public void call() {
+                    for (Promise<Optional<Cons<T>>> promise : promises)
+                        promise.closeAction().call();
+                }
+            };
         }
 
         @Override
