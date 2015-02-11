@@ -59,7 +59,7 @@ public class Stream<T> {
                     @Override
                     public Optional<Cons<List<T>>> get() {
                         final List<T> list = Collections.synchronizedList(new ArrayList<T>());
-                        A1 addToList = new A1<T>() {
+                        A1<T> addToList = new A1<T>() {
                             @Override
                             public void call(T t) {
                                 list.add(t);
