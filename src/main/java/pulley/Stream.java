@@ -1,10 +1,8 @@
 package pulley;
 
-import static pulley.util.Optional.of;
-
-import java.util.Deque;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 import pulley.util.Optional;
 
@@ -62,14 +60,17 @@ public class Stream<T> {
 
 					@Override
 					public Optional<Cons<List<T>>> get() {
-						final Deque<Optional<T>> queue = new ConcurrentLinkedDeque<Optional<T>>();
-						A1 addToQueue = new A1<T>() {
+						final List<T> list = Collections
+								.synchronizedList(new ArrayList<T>());
+						A1 addToList = new A1<T>() {
 							@Override
 							public void call(T t) {
-								queue.push(of(t));
+								list.add(t);
 							}
 						};
-
+						forEach(p, addToList);
+						return Optional.of(Cons.cons(list,
+								Promises.<Cons<List<T>>> empty()));
 					}
 
 					@Override
@@ -89,6 +90,11 @@ public class Stream<T> {
 
 	public void forEach(A1<? super T> action) {
 		Promise<Optional<Cons<T>>> p = factory.create();
+		forEach(p, action);
+	}
+
+	private static <T> void forEach(Promise<Optional<Cons<T>>> p,
+			A1<? super T> action) {
 		while (true) {
 			Optional<Cons<T>> value = p.get();
 			if (value.isPresent()) {
