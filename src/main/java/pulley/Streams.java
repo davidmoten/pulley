@@ -19,10 +19,10 @@ public class Streams {
     private static Stream<?> EMPTY = stream(completedPromiseFactory(Optional
             .<Cons<Object>> absent()));
 
-    private static Promise<Optional<Cons<?>>> EMPTY_PROMISE = new Promise<Optional<Cons<?>>>() {
+    private static StreamPromise<?> EMPTY_PROMISE = new StreamPromise<Object>() {
 
         @Override
-        public Optional<Cons<?>> get() {
+        public Optional<Cons<Object>> get() {
             return absent();
         }
 
@@ -42,8 +42,8 @@ public class Streams {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Promise<Optional<Cons<T>>> emptyPromise() {
-        return (Promise<Optional<Cons<T>>>) ((Promise<?>) EMPTY_PROMISE);
+    public static <T> StreamPromise<T> emptyPromise() {
+        return (StreamPromise<T>) ((Promise<?>) EMPTY_PROMISE);
     }
 
     @SuppressWarnings("unchecked")

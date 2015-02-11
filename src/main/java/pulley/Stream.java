@@ -49,6 +49,10 @@ public class Stream<T> {
         return stream(factory2);
     }
 
+    public Stream<T> doOnTerminate(A0 action) {
+        return null;
+    }
+
     public Stream<List<T>> toList() {
         Factory<Promise<Optional<Cons<List<T>>>>> factory2 = new Factory<Promise<Optional<Cons<List<T>>>>>() {
             @Override
