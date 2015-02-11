@@ -77,4 +77,10 @@ public class StreamsTest {
 		s.schedule(Actions.info("from computation"));
 	}
 
+	@Test
+	public void testMergeSychronous() {
+		Streams.merge(Arrays.asList(Streams.from(Arrays.asList(1, 2, 3)),
+				Streams.from(Arrays.asList(4, 5, 6))));
+	}
+
 }

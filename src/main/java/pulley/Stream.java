@@ -1,5 +1,11 @@
 package pulley;
 
+import static pulley.util.Optional.of;
+
+import java.util.Deque;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
+
 import pulley.util.Optional;
 
 public class Stream<T> {
@@ -43,6 +49,40 @@ public class Stream<T> {
 				};
 			}
 
+		};
+		return stream(factory2);
+	}
+
+	public Stream<List<T>> toList() {
+		Factory<Promise<Optional<Cons<List<T>>>>> factory2 = new Factory<Promise<Optional<Cons<List<T>>>>>() {
+			@Override
+			public Promise<Optional<Cons<List<T>>>> create() {
+				final Promise<Optional<Cons<T>>> p = factory.create();
+				Promise<Optional<Cons<List<T>>>> p2 = new Promise<Optional<Cons<List<T>>>>() {
+
+					@Override
+					public Optional<Cons<List<T>>> get() {
+						final Deque<Optional<T>> queue = new ConcurrentLinkedDeque<Optional<T>>();
+						A1 addToQueue = new A1<T>() {
+							@Override
+							public void call(T t) {
+								queue.push(of(t));
+							}
+						};
+
+					}
+
+					@Override
+					public A0 closeAction() {
+						return p.closeAction();
+					}
+
+					@Override
+					public Scheduler scheduler() {
+						return p.scheduler();
+					}
+				};
+			}
 		};
 		return stream(factory2);
 	}
