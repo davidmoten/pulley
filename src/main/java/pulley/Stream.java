@@ -21,12 +21,23 @@ public class Stream<T> {
         return new Stream<T>(factory);
     }
 
+    public <R> Stream<R> transform(final Transformer<T, R> transformer) {
+        final StreamFactory<R> f = new StreamFactory<R>() {
+
+            @Override
+            public Promise<Optional<Cons<R>>> create() {
+                final Promise<Optional<Cons<T>>> p = factory.create();
+                return transformer.transform(p);
+            }
+        };
+        return stream(f);
+    }
+
     public <R> Stream<R> map(final F1<? super T, ? extends R> f) {
         final F1<Optional<Cons<T>>, Optional<Cons<R>>> g = F.optional(F.cons(f));
-        StreamFactory<R> factory2 = new StreamFactory<R>() {
+        Transformer<T, R> transformer = new Transformer<T, R>() {
             @Override
-            public StreamPromise<R> create() {
-                final Promise<Optional<Cons<T>>> p = factory.create();
+            public StreamPromise<R> transform(final Promise<Optional<Cons<T>>> p) {
                 return new StreamPromise<R>() {
                     @Override
                     public Optional<Cons<R>> get() {
@@ -40,13 +51,12 @@ public class Stream<T> {
 
                     @Override
                     public Scheduler scheduler() {
-                        return Schedulers.immediate();
+                        return p.scheduler();
                     }
                 };
             }
-
         };
-        return stream((Stream.<R> toFactory(factory2)));
+        return transform(transformer);
     }
 
     @SuppressWarnings("unchecked")
@@ -91,18 +101,6 @@ public class Stream<T> {
             }
         };
         return transform(transformer);
-    }
-
-    public <R> Stream<R> transform(final Transformer<T, R> transformer) {
-        final StreamFactory<R> f = new StreamFactory<R>() {
-
-            @Override
-            public Promise<Optional<Cons<R>>> create() {
-                final Promise<Optional<Cons<T>>> p = factory.create();
-                return transformer.transform(p);
-            }
-        };
-        return stream(f);
     }
 
     public void forEach(A1<? super T> action) {
