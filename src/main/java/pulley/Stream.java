@@ -7,27 +7,27 @@ import java.util.List;
 import pulley.util.Optional;
 
 public class Stream<T> {
-    private final Factory<Promise<Optional<Cons<T>>>> factory;
+    private final Factory<StreamPromise<T>> factory;
 
-    public Stream(Factory<Promise<Optional<Cons<T>>>> factory) {
+    public Stream(Factory<StreamPromise<T>> factory) {
         this.factory = factory;
     }
 
-    public Factory<Promise<Optional<Cons<T>>>> factory() {
+    public Factory<StreamPromise<T>> factory() {
         return factory;
     }
 
-    public static <T> Stream<T> stream(Factory<Promise<Optional<Cons<T>>>> factory) {
+    public static <T> Stream<T> stream(Factory<StreamPromise<T>> factory) {
         return new Stream<T>(factory);
     }
 
     public <R> Stream<R> map(final F1<? super T, ? extends R> f) {
         final F1<Optional<Cons<T>>, Optional<Cons<R>>> g = F.optional(F.cons(f));
-        Factory<Promise<Optional<Cons<R>>>> factory2 = new Factory<Promise<Optional<Cons<R>>>>() {
+        Factory<StreamPromise<R>> factory2 = new Factory<StreamPromise<R>>() {
             @Override
-            public Promise<Optional<Cons<R>>> create() {
-                final Promise<Optional<Cons<T>>> p = factory.create();
-                return new Promise<Optional<Cons<R>>>() {
+            public StreamPromise<R> create() {
+                final StreamPromise<T> p = factory.create();
+                return new StreamPromise<R>() {
                     @Override
                     public Optional<Cons<R>> get() {
                         return g.call(p.get());
@@ -54,11 +54,11 @@ public class Stream<T> {
     }
 
     public Stream<List<T>> toList() {
-        Factory<Promise<Optional<Cons<List<T>>>>> factory2 = new Factory<Promise<Optional<Cons<List<T>>>>>() {
+        Factory<StreamPromise<List<T>>> factory2 = new Factory<StreamPromise<List<T>>>() {
             @Override
-            public Promise<Optional<Cons<List<T>>>> create() {
-                final Promise<Optional<Cons<T>>> p = factory.create();
-                return new Promise<Optional<Cons<List<T>>>>() {
+            public StreamPromise<List<T>> create() {
+                final StreamPromise<T> p = factory.create();
+                return new StreamPromise<List<T>>() {
 
                     @Override
                     public Optional<Cons<List<T>>> get() {
