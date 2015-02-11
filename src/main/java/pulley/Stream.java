@@ -23,7 +23,7 @@ public class Stream<T> {
 
     public <R> Stream<R> map(final F1<? super T, ? extends R> f) {
         final F1<Optional<Cons<T>>, Optional<Cons<R>>> g = F.optional(F.cons(f));
-        Factory<StreamPromise<R>> factory2 = new Factory<StreamPromise<R>>() {
+        StreamFactory<R> factory2 = new StreamFactory<R>() {
             @Override
             public StreamPromise<R> create() {
                 final Promise<Optional<Cons<T>>> p = factory.create();
@@ -55,14 +55,14 @@ public class Stream<T> {
     }
 
     public Stream<T> doOnTerminate(A0 action) {
+        // TODO
         return null;
     }
 
     public Stream<List<T>> toList() {
-        Factory<StreamPromise<List<T>>> factory2 = new Factory<StreamPromise<List<T>>>() {
+        Transformer<T, List<T>> transformer = new Transformer<T, List<T>>() {
             @Override
-            public StreamPromise<List<T>> create() {
-                final Promise<Optional<Cons<T>>> p = factory.create();
+            public Promise<Optional<Cons<List<T>>>> transform(final Promise<Optional<Cons<T>>> p) {
                 return new StreamPromise<List<T>>() {
 
                     @Override
@@ -90,7 +90,7 @@ public class Stream<T> {
                 };
             }
         };
-        return stream((Stream.<List<T>> toFactory(factory2)));
+        return transform(transformer);
     }
 
     public <R> Stream<R> transform(final Transformer<T, R> transformer) {
