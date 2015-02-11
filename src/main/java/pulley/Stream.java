@@ -7,17 +7,17 @@ import java.util.List;
 import pulley.util.Optional;
 
 public class Stream<T> {
-    private final Factory<StreamPromise<T>> factory;
+    private final Factory<? extends Promise<Optional<Cons<T>>>> factory;
 
-    public Stream(Factory<StreamPromise<T>> factory) {
+    public Stream(Factory<? extends Promise<Optional<Cons<T>>>> factory) {
         this.factory = factory;
     }
 
-    public Factory<StreamPromise<T>> factory() {
+    public Factory<? extends Promise<Optional<Cons<T>>>> factory() {
         return factory;
     }
 
-    public static <T> Stream<T> stream(Factory<StreamPromise<T>> factory) {
+    public static <T> Stream<T> stream(Factory<? extends Promise<Optional<Cons<T>>>> factory) {
         return new Stream<T>(factory);
     }
 
@@ -26,7 +26,7 @@ public class Stream<T> {
         Factory<StreamPromise<R>> factory2 = new Factory<StreamPromise<R>>() {
             @Override
             public StreamPromise<R> create() {
-                final StreamPromise<T> p = factory.create();
+                final Promise<Optional<Cons<T>>> p = factory.create();
                 return new StreamPromise<R>() {
                     @Override
                     public Optional<Cons<R>> get() {
@@ -57,7 +57,7 @@ public class Stream<T> {
         Factory<StreamPromise<List<T>>> factory2 = new Factory<StreamPromise<List<T>>>() {
             @Override
             public StreamPromise<List<T>> create() {
-                final StreamPromise<T> p = factory.create();
+                final Promise<Optional<Cons<T>>> p = factory.create();
                 return new StreamPromise<List<T>>() {
 
                     @Override
