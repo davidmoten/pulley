@@ -7,9 +7,9 @@ import java.util.List;
 import pulley.util.Optional;
 
 public class Stream<T> {
-    private final Factory<? extends Promise<Optional<Cons<T>>>> factory;
+    private final Factory<Promise<Optional<Cons<T>>>> factory;
 
-    public Stream(Factory<? extends Promise<Optional<Cons<T>>>> factory) {
+    public Stream(Factory<Promise<Optional<Cons<T>>>> factory) {
         this.factory = factory;
     }
 
@@ -17,7 +17,7 @@ public class Stream<T> {
         return factory;
     }
 
-    public static <T> Stream<T> stream(Factory<? extends Promise<Optional<Cons<T>>>> factory) {
+    public static <T> Stream<T> stream(Factory<Promise<Optional<Cons<T>>>> factory) {
         return new Stream<T>(factory);
     }
 
@@ -46,7 +46,12 @@ public class Stream<T> {
             }
 
         };
-        return stream(factory2);
+        return stream((Stream.<R> toFactory(factory2)));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> Factory<Promise<Optional<Cons<T>>>> toFactory(Factory<?> factory) {
+        return (Factory<Promise<Optional<Cons<T>>>>) (Factory<?>) factory;
     }
 
     public Stream<T> doOnTerminate(A0 action) {
@@ -85,7 +90,19 @@ public class Stream<T> {
                 };
             }
         };
-        return stream(factory2);
+        return stream((Stream.<List<T>> toFactory(factory2)));
+    }
+
+    public <R> Stream<R> transform(final Transformer<T, R> transformer) {
+        final StreamFactory<R> f = new StreamFactory<R>() {
+
+            @Override
+            public Promise<Optional<Cons<R>>> create() {
+                final Promise<Optional<Cons<T>>> p = factory.create();
+                return transformer.transform(p);
+            }
+        };
+        return stream(f);
     }
 
     public void forEach(A1<? super T> action) {
