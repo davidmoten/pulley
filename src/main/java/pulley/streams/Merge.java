@@ -17,12 +17,17 @@ import pulley.Promise;
 import pulley.Scheduler;
 import pulley.Schedulers;
 import pulley.Stream;
+import pulley.Util;
 import pulley.util.Optional;
 
 public class Merge {
 
     public static <T> Stream<T> create(final List<Stream<T>> list) {
         return stream(factory(list));
+    }
+
+    public static <T> Stream<T> create(final Stream<Stream<T>> streams) {
+        return Util.notImplemented();
     }
 
     private static <T> Factory<Promise<Optional<Cons<T>>>> factory(final List<Stream<T>> streams) {

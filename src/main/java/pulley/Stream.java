@@ -100,6 +100,10 @@ public class Stream<T> {
         return transform(transformer);
     }
 
+    public <R> Stream<R> flatMap(F1<T, Stream<R>> f) {
+        return Streams.merge(map(f));
+    }
+
     public void forEach(A1<? super T> action) {
         Promise<Optional<Cons<T>>> p = factory.create();
         forEach(p, action);

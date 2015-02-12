@@ -59,6 +59,10 @@ public class Streams {
         return Merge.create(streams);
     }
 
+    public static <T> Stream<T> merge(Stream<Stream<T>> streams) {
+        return Util.notImplemented();
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> Stream<T> empty() {
         return (Stream<T>) EMPTY;
