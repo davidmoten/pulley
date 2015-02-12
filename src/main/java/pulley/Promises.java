@@ -31,4 +31,11 @@ public class Promises {
             }
         };
     }
+
+    public static <T> Promise<T> cache(final Promise<T> promise) {
+        if (!(promise instanceof CachingPromise))
+            return new CachingPromise<T>(promise);
+        else
+            return promise;
+    }
 }
