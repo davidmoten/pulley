@@ -43,7 +43,7 @@ public class Streams {
 
     @SuppressWarnings("unchecked")
     public static <T> StreamPromise<T> emptyPromise() {
-        return (StreamPromise<T>) ((Promise<?>) EMPTY_PROMISE);
+        return (StreamPromise<T>) EMPTY_PROMISE;
     }
 
     @SuppressWarnings("unchecked")

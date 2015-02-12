@@ -35,6 +35,16 @@ public class Stream<T> {
         return stream(f);
     }
 
+    public Stream<T> scheduleOn(final Scheduler scheduler) {
+        return transform(new Transformer<T, T>() {
+
+            @Override
+            public Promise<Optional<Cons<T>>> transform(Promise<Optional<Cons<T>>> promise) {
+                return new SchedulingPromise<Optional<Cons<T>>>(promise, scheduler);
+            }
+        });
+    }
+
     public <R> Stream<R> map(final F1<? super T, ? extends R> f) {
         final F1<Optional<Cons<T>>, Optional<Cons<R>>> g = F.optional(F.cons(f));
         Transformer<T, R> transformer = new Transformer<T, R>() {

@@ -1,11 +1,11 @@
 package pulley;
 
-public interface Promise<T> extends Job<T> {
+public interface Promise<T> {
 
-	T get();
+    T get();
 
-	A0 closeAction();
+    A0 closeAction();
 
-	Scheduler scheduler();
+    Scheduler scheduler();
 
 }
