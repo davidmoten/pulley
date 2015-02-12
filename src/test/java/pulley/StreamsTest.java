@@ -97,7 +97,7 @@ public class StreamsTest {
     @Test
     public void testLots() {
         // for (int i = 1; i <= 10; i++)
-        Streams.range(1, 10000000).forEach();
+        Streams.range(1, 100000).forEach();
     }
 
 }
