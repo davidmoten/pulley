@@ -8,7 +8,6 @@ import static pulley.util.Optional.of;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import pulley.streams.FromIterable;
 import pulley.streams.Merge;
