@@ -1,9 +1,11 @@
 package pulley;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static pulley.Actions.println;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -87,6 +89,30 @@ public class StreamsTest {
     public void testMergeSychronous() {
         Streams.merge(Arrays.asList(Streams.from(Arrays.asList(1, 2, 3)),
                 Streams.from(Arrays.asList(4, 5, 6))));
+    }
+
+    @Test
+    public void testFilterMixOfMatchAndNoMatch() {
+        List<Integer> list = Streams.from(Arrays.asList(1, 2, 3, 4, 5))
+                .filter(new Predicate<Integer>() {
+                    @Override
+                    public Boolean call(Integer t) {
+                        return t % 2 == 0;
+                    }
+                }).toList().single();
+        assertEquals(Arrays.asList(2, 4), list);
+    }
+
+    @Test
+    public void testFilterAll() {
+        List<Integer> list = Streams.from(Arrays.asList(1, 2, 3, 4, 5))
+                .filter(new Predicate<Integer>() {
+                    @Override
+                    public Boolean call(Integer t) {
+                        return t < 0;
+                    }
+                }).toList().single();
+        assertTrue(list.isEmpty());
     }
 
     @Test
