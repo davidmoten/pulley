@@ -110,16 +110,13 @@ public class Stream<T> {
     }
 
     public void forEach(A1<? super T> action) {
-        Promise<Optional<Cons<T>>> p = factory.create();
-        forEach(p, action);
+        forEach(factory.create(), action);
     }
 
     private static <T> void forEach(Promise<Optional<Cons<T>>> p, final A1<? super T> action) {
-        while (true) {
+        do {
             p = performActionAndAwaitCompletion(p, action);
-            if (p == null)
-                return;
-        }
+        } while (p != null);
     }
 
     private static <T> Promise<Optional<Cons<T>>> performActionAndAwaitCompletion(
