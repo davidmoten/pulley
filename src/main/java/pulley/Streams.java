@@ -8,6 +8,7 @@ import static pulley.util.Optional.of;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import pulley.streams.FromIterable;
 import pulley.streams.Merge;
@@ -72,4 +73,10 @@ public class Streams {
         return Range.create(start, count);
     }
 
+    public static <T> Promise<T> cache(final Promise<T> promise) {
+        if (!(promise instanceof CachingPromise))
+            return new CachingPromise<T>(promise);
+        else
+            return promise;
+    }
 }

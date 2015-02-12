@@ -10,13 +10,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.A0;
-import pulley.CachingPromise;
 import pulley.Cons;
 import pulley.Factory;
 import pulley.Promise;
 import pulley.Scheduler;
 import pulley.Schedulers;
 import pulley.Stream;
+import pulley.Streams;
 import pulley.Util;
 import pulley.util.Optional;
 
@@ -68,9 +68,7 @@ public class Merge {
                     @Override
                     public void call() {
                         if (!found.get()) {
-                            if (!(promises2.get(index) instanceof CachingPromise))
-                                promises2.set(index, new CachingPromise<Optional<Cons<T>>>(
-                                        promises2.get(index)));
+                            promises2.set(index, Streams.cache(promises2.get(index)));
                             Optional<Cons<T>> t = promises2.get(index).get();
                             if (t.isPresent() && found.compareAndSet(false, true)) {
                                 value.set(t);
