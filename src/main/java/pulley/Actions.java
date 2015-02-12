@@ -1,6 +1,7 @@
 package pulley;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +92,24 @@ public class Actions {
                 action.call();
             }
         };
+    }
+
+    public static <T> ActionLatest<T> latest() {
+        return new ActionLatest<T>();
+    }
+
+    public static class ActionLatest<T> implements A1<T> {
+
+        private final AtomicReference<T> latest = new AtomicReference<T>();
+
+        @Override
+        public void call(T t) {
+            latest.set(t);
+        }
+
+        public T get() {
+            return latest.get();
+        }
     }
 
 }

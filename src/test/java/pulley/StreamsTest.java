@@ -128,6 +128,17 @@ public class StreamsTest {
     }
 
     @Test
+    public void testFilterOnEmpty() {
+        List<Integer> list = Streams.<Integer> empty().filter(new Predicate<Integer>() {
+            @Override
+            public Boolean call(Integer t) {
+                return true;
+            }
+        }).toList().single();
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
     public void testList() {
         assertEquals(Arrays.asList(1, 2), Streams.just(1, 2).toList().single());
     }
@@ -136,6 +147,12 @@ public class StreamsTest {
     public void testLots() {
         // for (int i = 1; i <= 10; i++)
         Streams.range(1, 100000).forEach();
+    }
+
+    @Test
+    public void testConcatWith() {
+        assertEquals(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9),
+                Streams.range(1, 5).concatWith(Streams.range(6, 4)).toList().single());
     }
 
 }

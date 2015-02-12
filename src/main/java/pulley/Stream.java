@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
+import pulley.Actions.ActionLatest;
 import pulley.util.Optional;
 
 public class Stream<T> {
@@ -124,18 +125,12 @@ public class Stream<T> {
                 @Override
                 public Optional<Cons<T>> get() {
                     Optional<Promise<Optional<Cons<T>>>> p = Optional.of(promise);
-                    final AtomicReference<T> latest = new AtomicReference<T>();
-                    A1<T> action = new A1<T>() {
-                        @Override
-                        public void call(T t) {
-                            latest.set(t);
-                        }
-                    };
+                    Actions.ActionLatest<T> recorder = Actions.latest();
                     do {
-                        p = performActionAndAwaitCompletion(p.get(), action);
-                    } while (p.isPresent() && !predicate.call(latest.get()));
+                        p = performActionAndAwaitCompletion(p.get(), recorder);
+                    } while (p.isPresent() && !predicate.call(recorder.get()));
                     if (p.isPresent())
-                        return Optional.of(Cons.cons(latest.get(),
+                        return Optional.of(Cons.cons(recorder.get(),
                                 FilterTransformer.this.transform(p.get())));
                     else
                         return Optional.absent();
@@ -152,6 +147,56 @@ public class Stream<T> {
                 }
             };
         }
+    }
+
+    public Stream<T> concatWith(final Stream<T> stream) {
+        return transform(new ConcatTransformer<T>(stream));
+    }
+
+    private static class ConcatTransformer<T> implements Transformer<T, T> {
+
+        private final Stream<T> stream;
+
+        public ConcatTransformer(Stream<T> stream) {
+            this.stream = stream;
+        }
+
+        @Override
+        public StreamPromise<T> transform(final Promise<Optional<Cons<T>>> promise) {
+            return new StreamPromise<T>() {
+
+                @Override
+                public Optional<Cons<T>> get() {
+                    Actions.ActionLatest<T> recorder = Actions.latest();
+                    Optional<Promise<Optional<Cons<T>>>> p = performActionAndAwaitCompletion(
+                            promise, recorder);
+                    if (p.isPresent())
+                        return Optional.of(Cons.cons(recorder.get(),
+                                ConcatTransformer.this.transform(p.get())));
+                    else {
+                        Promise<Optional<Cons<T>>> promise2 = stream.factory.create();
+                        Actions.ActionLatest<T> recorder2 = Actions.latest();
+                        Optional<Promise<Optional<Cons<T>>>> p2 = performActionAndAwaitCompletion(
+                                promise2, recorder2);
+                        if (p2.isPresent())
+                            return Optional.of(Cons.cons(recorder2.get(), p2.get()));
+                        else
+                            return Optional.absent();
+                    }
+                }
+
+                @Override
+                public A0 closeAction() {
+                    return promise.closeAction();
+                }
+
+                @Override
+                public Scheduler scheduler() {
+                    return promise.scheduler();
+                }
+            };
+        }
+
     }
 
     public <R> Stream<R> flatMap(F1<T, Stream<R>> f) {
