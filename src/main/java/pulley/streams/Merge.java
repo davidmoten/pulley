@@ -64,7 +64,8 @@ public class Merge {
 
             for (int i = 0; i < promises.size(); i++) {
                 final int index = i;
-                promises.get(index).scheduler().schedule(new A0() {
+                Promise<Optional<Cons<T>>> p = promises.get(index);
+                p.scheduler().schedule(new A0() {
                     @Override
                     public void call() {
                         if (!found.get()) {
@@ -75,6 +76,7 @@ public class Merge {
                                 promises2.set(index, t.get().tail());
                                 latch.countDown();
                             } else if (!t.isPresent()) {
+                                promises2.set(index, null);
                                 if (countTerminated.incrementAndGet() == promises.size()) {
                                     latch.countDown();
                                 }
@@ -89,10 +91,18 @@ public class Merge {
                     return Optional.absent();
                 else
                     return Optional.of(Cons.cons(value.get().get().head(), new MergePromise<T>(
-                            promises2)));
+                            removeNulls(promises2))));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        private static <T> List<T> removeNulls(List<T> list) {
+            List<T> list2 = new ArrayList<T>();
+            for (T t : list)
+                if (t != null)
+                    list2.add(t);
+            return list2;
         }
 
         @Override
