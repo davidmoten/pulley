@@ -113,16 +113,17 @@ public class Stream<T> {
         forEach(factory.create(), action);
     }
 
-    private static <T> void forEach(Promise<Optional<Cons<T>>> p, final A1<? super T> action) {
+    private static <T> void forEach(Promise<Optional<Cons<T>>> promise, final A1<? super T> action) {
+        Optional<Promise<Optional<Cons<T>>>> p = Optional.of(promise);
         do {
-            p = performActionAndAwaitCompletion(p, action);
-        } while (p != null);
+            p = performActionAndAwaitCompletion(p.get(), action);
+        } while (p.isPresent());
     }
 
-    private static <T> Promise<Optional<Cons<T>>> performActionAndAwaitCompletion(
+    private static <T> Optional<Promise<Optional<Cons<T>>>> performActionAndAwaitCompletion(
             final Promise<Optional<Cons<T>>> p, final A1<? super T> action) {
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<Promise<Optional<Cons<T>>>> ref = new AtomicReference<Promise<Optional<Cons<T>>>>(
+        final AtomicReference<Optional<Promise<Optional<Cons<T>>>>> ref = new AtomicReference<Optional<Promise<Optional<Cons<T>>>>>(
                 null);
         final A0 a = new A0() {
             @Override
@@ -130,10 +131,10 @@ public class Stream<T> {
                 final Optional<Cons<T>> value = p.get();
                 if (value.isPresent()) {
                     action.call(value.get().head());
-                    ref.set(value.get().tail());
+                    ref.set(Optional.of(value.get().tail()));
                 } else {
                     p.closeAction().call();
-                    ref.set(null);
+                    ref.set(Optional.<Promise<Optional<Cons<T>>>> absent());
                 }
                 latch.countDown();
             }
@@ -155,11 +156,12 @@ public class Stream<T> {
         final Promise<Optional<Cons<T>>> p = factory.create();
         final List<T> list = Collections.synchronizedList(new ArrayList<T>());
         A1<T> addToList = Actions.addToList(list);
-        final Promise<Optional<Cons<T>>> p2 = performActionAndAwaitCompletion(p, addToList);
+        final Optional<Promise<Optional<Cons<T>>>> p2 = performActionAndAwaitCompletion(p,
+                addToList);
         if (list.size() == 0) {
             throw new RuntimeException("expected one item but no items emitted");
         } else {
-            performActionAndAwaitCompletion(p2, addToList);
+            performActionAndAwaitCompletion(p2.get(), addToList);
             if (list.size() > 1)
                 throw new RuntimeException("expected one item but more than one emitted");
             else
