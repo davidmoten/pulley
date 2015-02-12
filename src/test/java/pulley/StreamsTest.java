@@ -15,6 +15,11 @@ public class StreamsTest {
     }
 
     @Test
+    public void testHelloWorldFromADifferentScheduler() {
+        Streams.just("hello world").scheduleOn(Schedulers.computation()).forEach(Actions.log());
+    }
+
+    @Test
     public void testMap() {
         assertEquals(2, (int) Streams.just(1).map(plusOne()).single());
     }
@@ -56,25 +61,25 @@ public class StreamsTest {
     @Test
     public void testTrampoline() {
         Scheduler s = Schedulers.trampoline();
-        s.schedule(Actions.info("hello"));
-        s.schedule(Actions.info("world"));
-        s.schedule(Actions.info("from trampoline"));
+        s.schedule(Actions.log("hello"));
+        s.schedule(Actions.log("world"));
+        s.schedule(Actions.log("from trampoline"));
     }
 
     @Test
     public void testImmediate() {
         Scheduler s = Schedulers.immediate();
-        s.schedule(Actions.info("hello"));
-        s.schedule(Actions.info("world"));
-        s.schedule(Actions.info("from immediate"));
+        s.schedule(Actions.log("hello"));
+        s.schedule(Actions.log("world"));
+        s.schedule(Actions.log("from immediate"));
     }
 
     @Test
     public void testComputation() {
         Scheduler s = Schedulers.computation();
-        s.schedule(Actions.info("hello"));
-        s.schedule(Actions.info("world"));
-        s.schedule(Actions.info("from computation"));
+        s.schedule(Actions.log("hello"));
+        s.schedule(Actions.log("world"));
+        s.schedule(Actions.log("from computation"));
     }
 
     @Test
@@ -87,6 +92,12 @@ public class StreamsTest {
     @Test
     public void testList() {
         assertEquals(Arrays.asList(1, 2), Streams.just(1, 2).toList().single());
+    }
+
+    @Test
+    public void testLots() {
+        for (int i = 1; i <= 10; i++)
+            Streams.range(1, 10000000).forEach();
     }
 
 }
