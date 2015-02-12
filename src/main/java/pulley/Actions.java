@@ -1,5 +1,7 @@
 package pulley;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,15 @@ public class Actions {
             @Override
             public void call(T t) {
                 log.info(String.valueOf(t));
+            }
+        };
+    }
+
+    public static <T> A1<T> addToList(final List<T> list) {
+        return new A1<T>() {
+            @Override
+            public void call(T t) {
+                list.add(t);
             }
         };
     }

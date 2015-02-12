@@ -85,12 +85,7 @@ public class Stream<T> {
                     @Override
                     public Optional<Cons<List<T>>> get() {
                         final List<T> list = Collections.synchronizedList(new ArrayList<T>());
-                        A1<T> addToList = new A1<T>() {
-                            @Override
-                            public void call(T t) {
-                                list.add(t);
-                            }
-                        };
+                        A1<T> addToList = Actions.addToList(list);
                         forEach(p, addToList);
                         return Optional.of(Cons.cons(list, Promises.<Cons<List<T>>> empty()));
                     }
@@ -132,7 +127,7 @@ public class Stream<T> {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<Promise<Optional<Cons<T>>>> ref = new AtomicReference<Promise<Optional<Cons<T>>>>(
                 null);
-        A0 a = new A0() {
+        final A0 a = new A0() {
             @Override
             public void call() {
                 final Optional<Cons<T>> value = p.get();
@@ -162,12 +157,7 @@ public class Stream<T> {
     public T single() {
         final Promise<Optional<Cons<T>>> p = factory.create();
         final List<T> list = Collections.synchronizedList(new ArrayList<T>());
-        A1<T> addToList = new A1<T>() {
-            @Override
-            public void call(T t) {
-                list.add(t);
-            }
-        };
+        A1<T> addToList = Actions.addToList(list);
         final Promise<Optional<Cons<T>>> p2 = performActionAndAwaitCompletion(p, addToList);
         if (list.size() == 0) {
             throw new RuntimeException("expected one item but no items emitted");
