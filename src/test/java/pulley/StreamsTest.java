@@ -109,10 +109,22 @@ public class StreamsTest {
                 .filter(new Predicate<Integer>() {
                     @Override
                     public Boolean call(Integer t) {
-                        return t < 0;
+                        return false;
                     }
                 }).toList().single();
         assertTrue(list.isEmpty());
+    }
+
+    @Test
+    public void testFilterNone() {
+        List<Integer> list = Streams.from(Arrays.asList(1, 2, 3, 4, 5))
+                .filter(new Predicate<Integer>() {
+                    @Override
+                    public Boolean call(Integer t) {
+                        return true;
+                    }
+                }).toList().single();
+        assertEquals(Arrays.asList(1, 2, 3, 4, 5), list);
     }
 
     @Test
