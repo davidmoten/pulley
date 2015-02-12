@@ -1,11 +1,11 @@
 package pulley;
 
-public class SchedulingPromise<T> implements Promise<T> {
+public class ScheduledPromise<T> implements Promise<T> {
 
     private final Promise<T> promise;
     private final Scheduler scheduler;
 
-    public SchedulingPromise(Promise<T> promise, Scheduler scheduler) {
+    public ScheduledPromise(Promise<T> promise, Scheduler scheduler) {
         this.promise = promise;
         this.scheduler = scheduler;
     }
