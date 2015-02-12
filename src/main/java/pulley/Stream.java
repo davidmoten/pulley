@@ -3,10 +3,13 @@ package pulley;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.util.Optional;
 
 public class Stream<T> {
+
     private final Factory<Promise<Optional<Cons<T>>>> factory;
 
     public Stream(Factory<Promise<Optional<Cons<T>>>> factory) {
@@ -23,7 +26,6 @@ public class Stream<T> {
 
     public <R> Stream<R> transform(final Transformer<T, R> transformer) {
         final StreamFactory<R> f = new StreamFactory<R>() {
-
             @Override
             public Promise<Optional<Cons<R>>> create() {
                 final Promise<Optional<Cons<T>>> p = factory.create();
@@ -57,11 +59,6 @@ public class Stream<T> {
             }
         };
         return transform(transformer);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> Factory<Promise<Optional<Cons<T>>>> toFactory(Factory<?> factory) {
-        return (Factory<Promise<Optional<Cons<T>>>>) (Factory<?>) factory;
     }
 
     public Stream<T> doOnTerminate(A0 action) {
@@ -110,20 +107,33 @@ public class Stream<T> {
 
     private static <T> void forEach(Promise<Optional<Cons<T>>> p, final A1<? super T> action) {
         while (true) {
-            final Optional<Cons<T>> value = p.get();
-            if (value.isPresent()) {
-                A0 a = new A0() {
-                    @Override
-                    public void call() {
+            final Promise<Optional<Cons<T>>> promise = p;
+            final CountDownLatch latch = new CountDownLatch(1);
+            final AtomicReference<Promise<Optional<Cons<T>>>> ref = new AtomicReference<Promise<Optional<Cons<T>>>>(
+                    null);
+            A0 a = new A0() {
+                @Override
+                public void call() {
+                    final Optional<Cons<T>> value = promise.get();
+                    if (value.isPresent()) {
                         action.call(value.get().head());
+                        ref.set(value.get().tail());
+                    } else {
+                        promise.closeAction().call();
+                        ref.set(null);
                     }
-                };
-                p.scheduler().schedule(a);
-                p = value.get().tail();
-            } else {
-                p.closeAction().call();
-                return;
+                    latch.countDown();
+                }
+            };
+            p.scheduler().schedule(a);
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
+            p = ref.get();
+            if (p == null)
+                return;
         }
     }
 
