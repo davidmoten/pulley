@@ -175,7 +175,7 @@ public class StreamsTest {
         assertEquals(new HashSet<Integer>(source), new HashSet<Integer>(list));
     }
 
-    @Test
+    // @Test
     public void testFlatMapLots() {
         Streams.range(1, 10000).flatMap(new F1<Integer, Stream<Integer>>() {
             @Override
