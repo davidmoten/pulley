@@ -4,9 +4,10 @@ import static pulley.Stream.stream;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.A0;
@@ -60,7 +61,7 @@ public class Merge {
             final AtomicBoolean found = new AtomicBoolean(false);
             final AtomicReference<Optional<Cons<T>>> value = new AtomicReference<Optional<Cons<T>>>();
             final CountDownLatch latch = new CountDownLatch(1);
-            final AtomicInteger countTerminated = new AtomicInteger(0);
+            final ConcurrentSkipListSet<Integer> completed = new ConcurrentSkipListSet<Integer>();
 
             for (int i = 0; i < promises.size(); i++) {
                 final int index = i;
@@ -76,8 +77,8 @@ public class Merge {
                                 promises2.set(index, t.get().tail());
                                 latch.countDown();
                             } else if (!t.isPresent()) {
-                                promises2.set(index, null);
-                                if (countTerminated.incrementAndGet() == promises.size()) {
+                                completed.add(index);
+                                if (completed.size() == promises.size()) {
                                     latch.countDown();
                                 }
                             }
@@ -87,21 +88,23 @@ public class Merge {
             }
             try {
                 latch.await();
-                if (countTerminated.get() == promises.size())
+                if (completed.size() == promises.size())
                     return Optional.absent();
-                else
+                else {
                     return Optional.of(Cons.cons(value.get().get().head(), new MergePromise<T>(
-                            removeNulls(promises2))));
+                            copyExcluding(promises2, completed))));
+                }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        private static <T> List<T> removeNulls(List<T> list) {
+        private static <T> List<T> copyExcluding(List<T> list, Set<Integer> excludeIndexes) {
             List<T> list2 = new ArrayList<T>();
-            for (T t : list)
-                if (t != null)
-                    list2.add(t);
+            for (int i = 0; i < list.size(); i++) {
+                if (!excludeIndexes.contains(i))
+                    list2.add(list.get(i));
+            }
             return list2;
         }
 
