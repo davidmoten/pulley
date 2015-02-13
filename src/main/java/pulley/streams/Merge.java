@@ -187,7 +187,7 @@ public class Merge {
             }
             try {
                 latch.await();
-                if (completed.size() == promises.size())
+                if (completed.size() == promises2.size())
                     return Optional.absent();
                 else {
                     return Optional.of(Cons.cons(
