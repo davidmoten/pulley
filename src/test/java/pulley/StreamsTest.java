@@ -159,12 +159,7 @@ public class StreamsTest {
     @Test
     public void testFlatMapSynchronous() {
         List<Integer> source = Streams.range(1, 10).toList().single();
-        List<Integer> list = Streams.from(source).flatMap(new F1<Integer, Stream<Integer>>() {
-            @Override
-            public Stream<Integer> call(Integer t) {
-                return Streams.just(t);
-            }
-        }).toList().single();
+        List<Integer> list = Streams.from(source).flatMap(F.<Integer> wrap()).toList().single();
         assertEquals(source, list);
     }
 
@@ -178,6 +173,16 @@ public class StreamsTest {
             }
         }).toList().single();
         assertEquals(new HashSet<Integer>(source), new HashSet<Integer>(list));
+    }
+
+    @Test
+    public void testFlatMapLots() {
+        Streams.range(1, 10000).flatMap(new F1<Integer, Stream<Integer>>() {
+            @Override
+            public Stream<Integer> call(Integer t) {
+                return Streams.just(t).scheduleOn(Schedulers.computation());
+            }
+        }).forEach();
     }
 
 }
