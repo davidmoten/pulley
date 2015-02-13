@@ -73,7 +73,7 @@ public class Stream<T> {
 
     public Stream<T> doOnTerminate(A0 action) {
         // TODO
-        return null;
+        return Util.notImplemented();
     }
 
     public Stream<List<T>> toList() {
@@ -213,7 +213,7 @@ public class Stream<T> {
         } while (p.isPresent());
     }
 
-    private static <T> Optional<Promise<Optional<Cons<T>>>> performActionAndAwaitCompletion(
+    public static <T> Optional<Promise<Optional<Cons<T>>>> performActionAndAwaitCompletion(
             final Promise<Optional<Cons<T>>> p, final A1<? super T> action) {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<Optional<Promise<Optional<Cons<T>>>>> ref = new AtomicReference<Optional<Promise<Optional<Cons<T>>>>>(
