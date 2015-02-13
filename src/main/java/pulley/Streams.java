@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import pulley.streams.FromIterable;
-import pulley.streams.Merge;
+import pulley.transforms.Merge;
 import pulley.streams.Range;
 import pulley.util.Optional;
 

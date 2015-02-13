@@ -1,4 +1,4 @@
-package pulley.streams;
+package pulley.transforms;
 
 import java.util.ArrayList;
 import java.util.Collections;
