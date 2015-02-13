@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.A0;
 import pulley.A1;
+import pulley.CachingPromise;
 import pulley.Cons;
 import pulley.Factory;
 import pulley.Promise;
@@ -159,15 +160,15 @@ public class Merge {
         @Override
         public Optional<Cons<T>> get() {
             // blocking !!!!
-            final List<Promise<Optional<Cons<T>>>> promises2 = new ArrayList<Promise<Optional<Cons<T>>>>(
-                    promises);
+            final List<Promise<Optional<Cons<T>>>> promises2 = cached(new ArrayList<Promise<Optional<Cons<T>>>>(
+                    promises));
             final AtomicBoolean found = new AtomicBoolean(false);
             final AtomicReference<Optional<Cons<T>>> value = new AtomicReference<Optional<Cons<T>>>();
             final CountDownLatch latch = new CountDownLatch(1);
             final ConcurrentSkipListSet<Integer> completed = new ConcurrentSkipListSet<Integer>();
 
-            for (int i = 0; i < promises.size(); i++)
-                getFromPromise(promises, promises2, found, value, latch, completed, i);
+            for (int i = 0; i < promises2.size(); i++)
+                getFromPromise(promises2, found, value, latch, completed, i, lock);
 
             Optional<Promise<Optional<Cons<Stream<T>>>>> p = Optional.of(streamPromise);
             if (!found.get()) {
@@ -176,9 +177,9 @@ public class Merge {
                         @Override
                         public void call(Stream<T> stream) {
                             Promise<Optional<Cons<T>>> q = stream.factory().create();
-                            int newIndex = addToPromises(promises, q, lock);
-                            getFromPromise(promises, promises2, found, value, latch, completed,
-                                    newIndex);
+                            int newIndex = addToPromises(promises2, q, lock);
+                            getFromPromise(promises2, found, value, latch, completed, newIndex,
+                                    lock);
                         }
 
                     });
@@ -199,6 +200,14 @@ public class Merge {
             }
         }
 
+        private static <T> List<Promise<T>> cached(List<Promise<T>> list) {
+            // for performance could use mutable update
+            List<Promise<T>> list2 = new ArrayList<Promise<T>>();
+            for (Promise<T> t : list)
+                list2.add(Promises.cache(t));
+            return list2;
+        }
+
         private static <T> int addToPromises(List<Promise<Optional<Cons<T>>>> promises,
                 Promise<Optional<Cons<T>>> q, Object lock) {
             int newIndex;
@@ -210,25 +219,26 @@ public class Merge {
         }
 
         private static <T> void getFromPromise(final List<Promise<Optional<Cons<T>>>> promises,
-                final List<Promise<Optional<Cons<T>>>> promises2, final AtomicBoolean found,
-                final AtomicReference<Optional<Cons<T>>> value, final CountDownLatch latch,
-                final ConcurrentSkipListSet<Integer> completed, final int index) {
+                final AtomicBoolean found, final AtomicReference<Optional<Cons<T>>> value,
+                final CountDownLatch latch, final ConcurrentSkipListSet<Integer> completed,
+                final int index, final Object lock) {
             Promise<Optional<Cons<T>>> p = promises.get(index);
             if (!found.get())
                 p.scheduler().schedule(new A0() {
                     @Override
                     public void call() {
                         if (!found.get()) {
-                            promises2.set(index, Promises.cache(promises2.get(index)));
-                            Optional<Cons<T>> t = promises2.get(index).get();
+                            Optional<Cons<T>> t = promises.get(index).get();
                             if (t.isPresent() && found.compareAndSet(false, true)) {
                                 value.set(t);
-                                promises2.set(index, t.get().tail());
+                                promises.set(index, t.get().tail());
                                 latch.countDown();
                             } else if (!t.isPresent()) {
                                 completed.add(index);
-                                if (completed.size() == promises.size()) {
-                                    latch.countDown();
+                                synchronized (lock) {
+                                    if (completed.size() == promises.size()) {
+                                        latch.countDown();
+                                    }
                                 }
                             }
                         }

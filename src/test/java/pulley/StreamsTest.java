@@ -155,4 +155,16 @@ public class StreamsTest {
                 Streams.range(1, 5).concatWith(Streams.range(6, 4)).toList().single());
     }
 
+    @Test
+    public void testFlatMapSynchronous() {
+        List<Integer> list = Streams.range(1, 10).flatMap(new F1<Integer, Stream<Integer>>() {
+
+            @Override
+            public Stream<Integer> call(Integer t) {
+                return Streams.just(t);
+            }
+        }).toList().single();
+        assertEquals(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), list);
+    }
+
 }

@@ -60,7 +60,7 @@ public class Streams {
     }
 
     public static <T> Stream<T> merge(Stream<Stream<T>> streams) {
-        return Util.notImplemented();
+        return Merge.create(streams);
     }
 
     @SuppressWarnings("unchecked")
