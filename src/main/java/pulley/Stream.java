@@ -105,6 +105,10 @@ public class Stream<T> {
         return transform(transformer);
     }
 
+    public Stream<List<T>> buffer(int size) {
+        return Util.unexpected();
+    }
+
     public Stream<T> filter(final F1<? super T, Boolean> predicate) {
         return transform(new FilterTransformer<T>(predicate));
     }
