@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static pulley.Actions.println;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Test;
@@ -158,13 +159,24 @@ public class StreamsTest {
     @Test
     public void testFlatMapSynchronous() {
         List<Integer> list = Streams.range(1, 10).flatMap(new F1<Integer, Stream<Integer>>() {
-
             @Override
             public Stream<Integer> call(Integer t) {
                 return Streams.just(t);
             }
         }).toList().single();
         assertEquals(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), list);
+    }
+
+    @Test
+    public void testFlatMapAsynchronous() {
+        List<Integer> source = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        List<Integer> list = Streams.from(source).flatMap(new F1<Integer, Stream<Integer>>() {
+            @Override
+            public Stream<Integer> call(Integer t) {
+                return Streams.just(t).scheduleOn(Schedulers.computation());
+            }
+        }).toList().single();
+        assertEquals(new HashSet<Integer>(source), new HashSet<Integer>(list));
     }
 
 }
