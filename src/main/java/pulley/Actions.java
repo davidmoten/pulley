@@ -1,6 +1,7 @@
 package pulley;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
@@ -110,6 +111,32 @@ public class Actions {
         public T get() {
             return latest.get();
         }
+    }
+
+    public static class ActionSleeping implements A0 {
+
+        private final A0 action;
+        private final long time;
+        private final TimeProvider timeProvider;
+
+        public ActionSleeping(TimeProvider timeProvider, A0 action, long duration, TimeUnit unit) {
+            this.action = action;
+            this.timeProvider = timeProvider;
+            this.time = timeProvider.now() + unit.toMillis(duration);
+        }
+
+        @Override
+        public void call() {
+            long t = time - timeProvider.now();
+            if (t > 0)
+                try {
+                    Thread.sleep(t);
+                    action.call();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+        }
+
     }
 
 }
