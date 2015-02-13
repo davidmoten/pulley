@@ -158,18 +158,19 @@ public class StreamsTest {
 
     @Test
     public void testFlatMapSynchronous() {
-        List<Integer> list = Streams.range(1, 10).flatMap(new F1<Integer, Stream<Integer>>() {
+        List<Integer> source = Streams.range(1, 10).toList().single();
+        List<Integer> list = Streams.from(source).flatMap(new F1<Integer, Stream<Integer>>() {
             @Override
             public Stream<Integer> call(Integer t) {
                 return Streams.just(t);
             }
         }).toList().single();
-        assertEquals(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), list);
+        assertEquals(source, list);
     }
 
     @Test
     public void testFlatMapAsynchronous() {
-        List<Integer> source = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        List<Integer> source = Streams.range(1, 10).toList().single();
         List<Integer> list = Streams.from(source).flatMap(new F1<Integer, Stream<Integer>>() {
             @Override
             public Stream<Integer> call(Integer t) {
