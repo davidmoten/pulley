@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
+import pulley.transforms.Filter;
 import pulley.util.Optional;
 
 public class Stream<T> {
@@ -207,46 +208,7 @@ public class Stream<T> {
     }
 
     public Stream<T> filter(final F1<? super T, Boolean> predicate) {
-        return transform(new FilterTransformer<T>(predicate));
-    }
-
-    private static class FilterTransformer<T> implements Transformer<T, T> {
-
-        private final F1<? super T, Boolean> predicate;
-
-        FilterTransformer(F1<? super T, Boolean> predicate) {
-            this.predicate = predicate;
-        }
-
-        @Override
-        public StreamPromise<T> transform(final Promise<Optional<Cons<T>>> promise) {
-            return new StreamPromise<T>() {
-
-                @Override
-                public Optional<Cons<T>> get() {
-                    Optional<Promise<Optional<Cons<T>>>> p = Optional.of(promise);
-                    Actions.ActionLatest<T> recorder = Actions.latest();
-                    do {
-                        p = performActionAndAwaitCompletion(p.get(), recorder);
-                    } while (p.isPresent() && !predicate.call(recorder.get()));
-                    if (p.isPresent())
-                        return Optional.of(Cons.cons(recorder.get(),
-                                FilterTransformer.this.transform(p.get())));
-                    else
-                        return Optional.absent();
-                }
-
-                @Override
-                public A0 closeAction() {
-                    return promise.closeAction();
-                }
-
-                @Override
-                public Scheduler scheduler() {
-                    return promise.scheduler();
-                }
-            };
-        }
+        return Filter.filter(this, predicate);
     }
 
     public Stream<T> concatWith(final Stream<T> stream) {
