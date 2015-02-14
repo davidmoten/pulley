@@ -56,11 +56,11 @@ public class Streams {
     }
 
     public static <T> Stream<T> merge(List<Stream<T>> streams) {
-        return Merge.create(streams);
+        return Merge.merge(streams);
     }
 
     public static <T> Stream<T> merge(Stream<Stream<T>> streams) {
-        return Merge.create(streams);
+        return Merge.merge(streams);
     }
 
     @SuppressWarnings("unchecked")

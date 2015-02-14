@@ -23,11 +23,11 @@ import pulley.util.Optional;
 
 public class Merge {
 
-    public static <T> Stream<T> create(final List<Stream<T>> list) {
-        return create(Streams.from(list));
+    public static <T> Stream<T> merge(final List<Stream<T>> list) {
+        return merge(Streams.from(list));
     }
 
-    public static <T> Stream<T> create(final Stream<Stream<T>> streams) {
+    public static <T> Stream<T> merge(final Stream<Stream<T>> streams) {
         return Stream.stream(new Factory<Promise<Optional<Cons<T>>>>() {
             @Override
             public Promise<Optional<Cons<T>>> create() {
