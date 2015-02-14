@@ -1,5 +1,6 @@
 package pulley;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static pulley.Actions.println;
@@ -193,4 +194,38 @@ public class StreamsTest {
         }).forEach();
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testBufferTwoByOne() {
+        List<List<Integer>> list = Streams.range(1, 2).buffer(1).toList().single();
+        assertEquals(asList(asList(1), asList(2)), list);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testBufferTwoByTwo() {
+        List<List<Integer>> list = Streams.range(1, 2).buffer(2).toList().single();
+        assertEquals(asList(asList(1, 2)), list);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testBufferTwoByThree() {
+        List<List<Integer>> list = Streams.range(1, 2).buffer(3).toList().single();
+        assertEquals(asList(asList(1, 2)), list);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testBufferThreeByTwo() {
+        List<List<Integer>> list = Streams.range(1, 3).buffer(2).toList().single();
+        assertEquals(asList(asList(1, 2), asList(3)), list);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testBufferEmptyByTwo() {
+        List<List<Integer>> list = Streams.<Integer> empty().buffer(2).toList().single();
+        assertEquals(Collections.emptyList(), list);
+    }
 }
