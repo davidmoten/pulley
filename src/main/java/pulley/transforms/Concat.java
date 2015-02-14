@@ -1,11 +1,10 @@
 package pulley.transforms;
 
-import pulley.A0;
+import pulley.AbstractStreamPromise;
 import pulley.Actions;
 import pulley.Cons;
 import pulley.Promise;
 import pulley.Promises;
-import pulley.Scheduler;
 import pulley.Stream;
 import pulley.StreamPromise;
 import pulley.Transformer;
@@ -26,7 +25,7 @@ public class Concat {
 
         @Override
         public StreamPromise<T> transform(final Promise<Optional<Cons<T>>> promise) {
-            return new StreamPromise<T>() {
+            return new AbstractStreamPromise<T, T>(promise) {
 
                 @Override
                 public Optional<Cons<T>> get() {
@@ -48,15 +47,6 @@ public class Concat {
                     }
                 }
 
-                @Override
-                public A0 closeAction() {
-                    return promise.closeAction();
-                }
-
-                @Override
-                public Scheduler scheduler() {
-                    return promise.scheduler();
-                }
             };
         }
     }

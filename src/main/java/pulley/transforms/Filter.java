@@ -1,12 +1,11 @@
 package pulley.transforms;
 
-import pulley.A0;
+import pulley.AbstractStreamPromise;
 import pulley.Actions;
 import pulley.Cons;
 import pulley.F1;
 import pulley.Promise;
 import pulley.Promises;
-import pulley.Scheduler;
 import pulley.Stream;
 import pulley.StreamPromise;
 import pulley.Transformer;
@@ -28,7 +27,7 @@ public class Filter {
 
         @Override
         public StreamPromise<T> transform(final Promise<Optional<Cons<T>>> promise) {
-            return new StreamPromise<T>() {
+            return new AbstractStreamPromise<T, T>(promise) {
 
                 @Override
                 public Optional<Cons<T>> get() {
@@ -44,15 +43,6 @@ public class Filter {
                         return Optional.absent();
                 }
 
-                @Override
-                public A0 closeAction() {
-                    return promise.closeAction();
-                }
-
-                @Override
-                public Scheduler scheduler() {
-                    return promise.scheduler();
-                }
             };
         }
     }
