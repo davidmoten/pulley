@@ -9,7 +9,6 @@ import pulley.AbstractStreamPromise;
 import pulley.Actions;
 import pulley.Cons;
 import pulley.Promise;
-import pulley.Promises;
 import pulley.Stream;
 import pulley.Transformer;
 import pulley.util.Optional;
@@ -27,7 +26,7 @@ public class ToList {
                         final List<T> list = Collections.synchronizedList(new ArrayList<T>());
                         A1<T> addToList = Actions.addToList(list);
                         Stream.forEach(p, addToList);
-                        return Optional.of(Cons.cons(list, Promises.<Cons<List<T>>> empty()));
+                        return Optional.of(Cons.cons(list));
                     }
 
                 };

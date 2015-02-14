@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import pulley.Actions.ActionLatest;
 import pulley.transforms.Buffer;
 import pulley.transforms.Concat;
 import pulley.transforms.Filter;
@@ -56,6 +57,29 @@ public class Stream<T> {
     public Stream<T> doOnTerminate(A0 action) {
         // TODO
         return Util.notImplemented();
+    }
+
+    public Stream<T> doOnNext(final A1<T> action) {
+        return transform(new Transformer<T, T>() {
+
+            @Override
+            public Promise<Optional<Cons<T>>> transform(final Promise<Optional<Cons<T>>> promise) {
+                return new AbstractStreamPromise<T, T>(promise) {
+
+                    @Override
+                    public Optional<Cons<T>> get() {
+                        ActionLatest<T> latest = Actions.latest();
+                        A1<T> both = Actions.sequence(latest, action);
+                        Optional<Promise<Optional<Cons<T>>>> p = Promises
+                                .performActionAndAwaitCompletion(Promises.cache(promise), action);
+                        if (p.isPresent())
+                            return Optional.of(Cons.cons(latest.get(), p.get()));
+                        else
+                            return Optional.of(Cons.cons(latest.get()));
+                    }
+                };
+            }
+        });
     }
 
     public Stream<List<T>> toList() {

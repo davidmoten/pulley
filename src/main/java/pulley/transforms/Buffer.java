@@ -43,7 +43,7 @@ public class Buffer {
                     if (list.size() == 0)
                         return Optional.absent();
                     else if (!p.isPresent())
-                        return Optional.of(Cons.cons(list, Promises.<Cons<List<T>>> empty()));
+                        return Optional.of(Cons.cons(list));
                     else
                         return Optional.of(Cons.cons(list,
                                 BufferTransformer.this.transform(p.get())));

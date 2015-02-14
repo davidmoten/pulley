@@ -7,7 +7,6 @@ import pulley.AbstractStreamPromise;
 import pulley.Cons;
 import pulley.F2;
 import pulley.Promise;
-import pulley.Promises;
 import pulley.Stream;
 import pulley.Transformer;
 import pulley.util.Optional;
@@ -44,7 +43,7 @@ public class Reduce {
                         }
                     };
                     Stream.forEach(promise, action);
-                    return Optional.of(Cons.cons(ref.get(), Promises.<Cons<R>> empty()));
+                    return Optional.of(Cons.cons(ref.get()));
                 }
 
             };
