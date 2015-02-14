@@ -7,6 +7,7 @@ import java.util.List;
 import pulley.transforms.Buffer;
 import pulley.transforms.Concat;
 import pulley.transforms.Filter;
+import pulley.transforms.Map;
 import pulley.transforms.Reduce;
 import pulley.transforms.ToList;
 import pulley.util.Optional;
@@ -49,29 +50,7 @@ public class Stream<T> {
     }
 
     public <R> Stream<R> map(final F1<? super T, ? extends R> f) {
-        final F1<Optional<Cons<T>>, Optional<Cons<R>>> g = F.optional(F.cons(f));
-        Transformer<T, R> transformer = new Transformer<T, R>() {
-            @Override
-            public StreamPromise<R> transform(final Promise<Optional<Cons<T>>> p) {
-                return new StreamPromise<R>() {
-                    @Override
-                    public Optional<Cons<R>> get() {
-                        return g.call(p.get());
-                    }
-
-                    @Override
-                    public A0 closeAction() {
-                        return p.closeAction();
-                    }
-
-                    @Override
-                    public Scheduler scheduler() {
-                        return p.scheduler();
-                    }
-                };
-            }
-        };
-        return transform(transformer);
+        return Map.map(this, f);
     }
 
     public Stream<T> doOnTerminate(A0 action) {
