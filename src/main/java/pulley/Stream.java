@@ -151,6 +151,61 @@ public class Stream<T> {
         }
     }
 
+    public <R> Stream<R> reduce(R initial, F2<? super R, ? super T, ? extends R> reducer) {
+        return transform(new ReduceTransformer<T, R>(initial, reducer));
+    }
+
+    private static class ReduceTransformer<T, R> implements Transformer<T, R> {
+
+        private final R initial;
+        private final F2<? super R, ? super T, ? extends R> reducer;
+
+        public ReduceTransformer(R initial, F2<? super R, ? super T, ? extends R> reducer) {
+            this.initial = initial;
+            this.reducer = reducer;
+        }
+
+        @Override
+        public Promise<Optional<Cons<R>>> transform(final Promise<Optional<Cons<T>>> promise) {
+            return new StreamPromise<R>() {
+
+                @Override
+                public Optional<Cons<R>> get() {
+                    final AtomicReference<R> ref = new AtomicReference<R>(initial);
+                    A1<T> action = new A1<T>() {
+
+                        @Override
+                        public void call(T t) {
+                            ref.set(reducer.call(ref.get(), t));
+                        }
+                    };
+                    forEach(promise, action);
+                    return Optional.of(Cons.cons(ref.get(), Promises.<Cons<R>> empty()));
+                }
+
+                @Override
+                public A0 closeAction() {
+                    return promise.closeAction();
+                }
+
+                @Override
+                public Scheduler scheduler() {
+                    return promise.scheduler();
+                }
+            };
+        }
+    }
+
+    public Stream<Integer> count() {
+        return reduce(0, new F2<Integer, T, Integer>() {
+
+            @Override
+            public Integer call(Integer count, T t) {
+                return count + 1;
+            }
+        });
+    }
+
     public Stream<T> filter(final F1<? super T, Boolean> predicate) {
         return transform(new FilterTransformer<T>(predicate));
     }

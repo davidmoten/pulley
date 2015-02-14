@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static pulley.Actions.println;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -227,5 +226,10 @@ public class StreamsTest {
     public void testBufferEmptyByTwo() {
         List<List<Integer>> list = Streams.<Integer> empty().buffer(2).toList().single();
         assertEquals(Collections.emptyList(), list);
+    }
+
+    @Test
+    public void testReduce() {
+        assertEquals(4, (int) Streams.from(asList(2, 4, 6, 8)).count().single());
     }
 }
