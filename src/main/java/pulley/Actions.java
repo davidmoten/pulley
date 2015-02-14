@@ -7,6 +7,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pulley.util.Optional;
+
 public class Actions {
 
     private static final Logger log = LoggerFactory.getLogger(Actions.class);
@@ -106,8 +108,23 @@ public class Actions {
         };
     }
 
-    public static <T> ActionLatest<T> latest() {
-        return new ActionLatest<T>();
+    public static <T> ActionOptionalLatest<T> latest() {
+        return new ActionOptionalLatest<T>();
+    }
+
+    public static class ActionOptionalLatest<T> implements A1<T> {
+
+        private volatile Optional<T> latest = Optional.absent();
+
+        @Override
+        public void call(T t) {
+            latest = Optional.of(t);
+        }
+
+        public Optional<T> get() {
+            return latest;
+        }
+
     }
 
     public static class ActionLatest<T> implements A1<T> {

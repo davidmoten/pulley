@@ -14,21 +14,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 
 import pulley.Actions.ActionLatest;
+import pulley.Actions.ActionOptionalLatest;
 
 public class StreamsTest {
 
     @Test
     public void testHelloWorld() {
-        ActionLatest<String> latest = Actions.latest();
+        ActionOptionalLatest<String> latest = Actions.latest();
         Streams.just("hello world").forEach(latest);
-        assertEquals("hello world", latest.get());
+        assertEquals("hello world", latest.get().get());
     }
 
     @Test
     public void testHelloWorldFromADifferentScheduler() {
-        ActionLatest<String> latest = Actions.latest();
+        ActionOptionalLatest<String> latest = Actions.latest();
         Streams.just("hello world").scheduleOn(Schedulers.computation()).forEach(latest);
-        assertEquals("hello world", latest.get());
+        assertEquals("hello world", latest.get().get());
     }
 
     @Test
