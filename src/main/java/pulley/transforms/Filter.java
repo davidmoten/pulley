@@ -2,7 +2,7 @@ package pulley.transforms;
 
 import pulley.AbstractStreamPromise;
 import pulley.Actions;
-import pulley.Actions.ActionOptionalLatest;
+import pulley.Actions.Latest;
 import pulley.Cons;
 import pulley.F1;
 import pulley.Promise;
@@ -33,7 +33,7 @@ public class Filter {
                 @Override
                 public Optional<Cons<T>> get() {
                     Optional<Promise<Optional<Cons<T>>>> p = Optional.of(promise);
-                    ActionOptionalLatest<T> recorder = Actions.latest();
+                    Latest<T> recorder = Actions.latest();
                     do {
                         p = Promises.performActionAndAwaitCompletion(p.get(), recorder);
                     } while (p.isPresent() && recorder.get().isPresent()

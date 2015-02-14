@@ -13,21 +13,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
-import pulley.Actions.ActionLatest;
-import pulley.Actions.ActionOptionalLatest;
+import pulley.Actions.Latest;
 
 public class StreamsTest {
 
     @Test
     public void testHelloWorld() {
-        ActionOptionalLatest<String> latest = Actions.latest();
+        Latest<String> latest = Actions.latest();
         Streams.just("hello world").forEach(latest);
         assertEquals("hello world", latest.get().get());
     }
 
     @Test
     public void testHelloWorldFromADifferentScheduler() {
-        ActionOptionalLatest<String> latest = Actions.latest();
+        Latest<String> latest = Actions.latest();
         Streams.just("hello world").scheduleOn(Schedulers.computation()).forEach(latest);
         assertEquals("hello world", latest.get().get());
     }
@@ -164,6 +163,18 @@ public class StreamsTest {
     public void testConcatWith() {
         assertEquals(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9),
                 Streams.range(1, 5).concatWith(Streams.range(6, 4)).toList().single());
+    }
+
+    @Test
+    public void testConcatWithEmptyBefore() {
+        assertEquals(asList(1), Streams.<Integer> empty().concatWith(Streams.just(1)).toList()
+                .single());
+    }
+
+    @Test
+    public void testConcatWithEmptyAfter() {
+        assertEquals(asList(1), Streams.just(1).concatWith(Streams.<Integer> empty()).toList()
+                .single());
     }
 
     @Test

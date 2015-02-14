@@ -108,11 +108,11 @@ public class Actions {
         };
     }
 
-    public static <T> ActionOptionalLatest<T> latest() {
-        return new ActionOptionalLatest<T>();
+    public static <T> Latest<T> latest() {
+        return new Latest<T>();
     }
 
-    public static class ActionOptionalLatest<T> implements A1<T> {
+    public static class Latest<T> implements A1<T> {
 
         private volatile Optional<T> latest = Optional.absent();
 
