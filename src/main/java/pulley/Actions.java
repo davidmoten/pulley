@@ -2,6 +2,7 @@ package pulley;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +76,7 @@ public class Actions {
         };
     }
 
-    public static <T> A1<T> sequence(final A1<T> action1, final A1<T> action2) {
+    public static <T> A1<T> sequence(final A1<? super T> action1, final A1<? super T> action2) {
         return new A1<T>() {
 
             @Override
@@ -147,6 +148,16 @@ public class Actions {
                 }
         }
 
+    }
+
+    public static A1<Integer> increment(final AtomicInteger i) {
+        return new A1<Integer>() {
+
+            @Override
+            public void call(Integer t) {
+                i.incrementAndGet();
+            }
+        };
     }
 
 }

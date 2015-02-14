@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
@@ -230,5 +231,15 @@ public class StreamsTest {
     @Test
     public void testReduce() {
         assertEquals(4, (int) Streams.from(asList(2, 4, 6, 8)).count().single());
+    }
+
+    @Test
+    public void testDoOnNext() {
+        final AtomicInteger i = new AtomicInteger();
+        final AtomicInteger j = new AtomicInteger();
+        Streams.from(asList(1, 2, 3, 4)).doOnNext(Actions.increment(i))
+                .doOnNext(Actions.increment(j)).forEach();
+        assertEquals(4, i.get());
+        assertEquals(4, j.get());
     }
 }

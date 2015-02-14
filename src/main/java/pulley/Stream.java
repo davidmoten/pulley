@@ -9,6 +9,7 @@ import pulley.transforms.Buffer;
 import pulley.transforms.Concat;
 import pulley.transforms.Filter;
 import pulley.transforms.Map;
+import pulley.transforms.OnNext;
 import pulley.transforms.Reduce;
 import pulley.transforms.ToList;
 import pulley.util.Optional;
@@ -59,27 +60,8 @@ public class Stream<T> {
         return Util.notImplemented();
     }
 
-    public Stream<T> doOnNext(final A1<T> action) {
-        return transform(new Transformer<T, T>() {
-
-            @Override
-            public Promise<Optional<Cons<T>>> transform(final Promise<Optional<Cons<T>>> promise) {
-                return new AbstractStreamPromise<T, T>(promise) {
-
-                    @Override
-                    public Optional<Cons<T>> get() {
-                        ActionLatest<T> latest = Actions.latest();
-                        A1<T> both = Actions.sequence(latest, action);
-                        Optional<Promise<Optional<Cons<T>>>> p = Promises
-                                .performActionAndAwaitCompletion(Promises.cache(promise), action);
-                        if (p.isPresent())
-                            return Optional.of(Cons.cons(latest.get(), p.get()));
-                        else
-                            return Optional.of(Cons.cons(latest.get()));
-                    }
-                };
-            }
-        });
+    public Stream<T> doOnNext(final A1<? super T> action) {
+        return OnNext.onNext(this, action);
     }
 
     public Stream<List<T>> toList() {
