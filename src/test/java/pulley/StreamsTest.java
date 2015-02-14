@@ -221,7 +221,6 @@ public class StreamsTest {
         assertEquals(asList(asList(1, 2), asList(3)), list);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testBufferEmptyByTwo() {
         List<List<Integer>> list = Streams.<Integer> empty().buffer(2).toList().single();
