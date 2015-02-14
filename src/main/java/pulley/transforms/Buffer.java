@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import pulley.A0;
 import pulley.A1;
+import pulley.AbstractStreamPromise;
 import pulley.Actions;
 import pulley.Cons;
 import pulley.Promise;
 import pulley.Promises;
-import pulley.Scheduler;
 import pulley.Stream;
-import pulley.StreamPromise;
 import pulley.Transformer;
 import pulley.util.Optional;
 
@@ -31,8 +29,8 @@ public class Buffer {
         }
 
         @Override
-        public Promise<Optional<Cons<List<T>>>> transform(final Promise<Optional<Cons<T>>> promise) {
-            return new StreamPromise<List<T>>() {
+        public AbstractStreamPromise<T, List<T>> transform(final Promise<Optional<Cons<T>>> promise) {
+            return new AbstractStreamPromise<T, List<T>>(promise) {
 
                 @Override
                 public Optional<Cons<List<T>>> get() {
@@ -51,15 +49,6 @@ public class Buffer {
                                 BufferTransformer.this.transform(p.get())));
                 }
 
-                @Override
-                public A0 closeAction() {
-                    return promise.closeAction();
-                }
-
-                @Override
-                public Scheduler scheduler() {
-                    return promise.scheduler();
-                }
             };
         }
     }
