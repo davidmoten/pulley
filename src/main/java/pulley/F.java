@@ -63,4 +63,18 @@ public final class F {
             }
         };
     }
+
+    public static <T, R> F1<T, Result<R>> result(final F1<T, R> f) {
+        return new F1<T, Result<R>>() {
+
+            @Override
+            public Result<R> call(T t) {
+                try {
+                    return Result.value(f.call(t));
+                } catch (Throwable e) {
+                    return Result.error(e);
+                }
+            }
+        };
+    }
 }
