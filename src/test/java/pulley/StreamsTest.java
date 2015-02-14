@@ -4,22 +4,30 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static pulley.Actions.println;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Test;
 
+import pulley.Actions.ActionLatest;
+
 public class StreamsTest {
 
     @Test
     public void testHelloWorld() {
-        Streams.just("hello world").forEach(println());
+        ActionLatest<String> latest = Actions.latest();
+        Streams.just("hello world").forEach(latest);
+        assertEquals("hello world", latest.get());
     }
 
     @Test
     public void testHelloWorldFromADifferentScheduler() {
-        Streams.just("hello world").scheduleOn(Schedulers.computation()).forEach(Actions.log());
+        ActionLatest<String> latest = Actions.latest();
+        Streams.just("hello world").scheduleOn(Schedulers.computation()).forEach(latest);
+        assertEquals("hello world", latest.get());
     }
 
     @Test

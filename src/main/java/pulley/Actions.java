@@ -101,15 +101,15 @@ public class Actions {
 
     public static class ActionLatest<T> implements A1<T> {
 
-        private final AtomicReference<T> latest = new AtomicReference<T>();
+        private volatile T latest;
 
         @Override
         public void call(T t) {
-            latest.set(t);
+            latest = t;
         }
 
         public T get() {
-            return latest.get();
+            return latest;
         }
     }
 
