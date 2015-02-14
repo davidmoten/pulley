@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import pulley.transforms.Buffer;
 import pulley.transforms.Concat;
 import pulley.transforms.Filter;
 import pulley.transforms.ToList;
@@ -83,49 +84,7 @@ public class Stream<T> {
     }
 
     public Stream<List<T>> buffer(final int size) {
-        return transform(new BufferTransformer<T>(size));
-    }
-
-    private static class BufferTransformer<T> implements Transformer<T, List<T>> {
-
-        private final int size;
-
-        BufferTransformer(int size) {
-            this.size = size;
-        }
-
-        @Override
-        public Promise<Optional<Cons<List<T>>>> transform(final Promise<Optional<Cons<T>>> promise) {
-            return new StreamPromise<List<T>>() {
-
-                @Override
-                public Optional<Cons<List<T>>> get() {
-                    final List<T> list = Collections.synchronizedList(new ArrayList<T>());
-                    A1<T> addToList = Actions.addToList(list);
-                    Optional<Promise<Optional<Cons<T>>>> p = Optional.of(promise);
-                    do {
-                        p = Promises.performActionAndAwaitCompletion(p.get(), addToList);
-                    } while (p.isPresent() && list.size() < size);
-                    if (list.size() == 0)
-                        return Optional.absent();
-                    else if (!p.isPresent())
-                        return Optional.of(Cons.cons(list, Promises.<Cons<List<T>>> empty()));
-                    else
-                        return Optional.of(Cons.cons(list,
-                                BufferTransformer.this.transform(p.get())));
-                }
-
-                @Override
-                public A0 closeAction() {
-                    return promise.closeAction();
-                }
-
-                @Override
-                public Scheduler scheduler() {
-                    return promise.scheduler();
-                }
-            };
-        }
+        return Buffer.buffer(this, size);
     }
 
     public <R> Stream<R> reduce(R initial, F2<? super R, ? super T, ? extends R> reducer) {
