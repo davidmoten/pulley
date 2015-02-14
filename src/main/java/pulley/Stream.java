@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
+import pulley.transforms.Concat;
 import pulley.transforms.Filter;
 import pulley.util.Optional;
 
@@ -212,53 +213,7 @@ public class Stream<T> {
     }
 
     public Stream<T> concatWith(final Stream<T> stream) {
-        return transform(new ConcatTransformer<T>(stream));
-    }
-
-    private static class ConcatTransformer<T> implements Transformer<T, T> {
-
-        private final Stream<T> stream;
-
-        public ConcatTransformer(Stream<T> stream) {
-            this.stream = stream;
-        }
-
-        @Override
-        public StreamPromise<T> transform(final Promise<Optional<Cons<T>>> promise) {
-            return new StreamPromise<T>() {
-
-                @Override
-                public Optional<Cons<T>> get() {
-                    Actions.ActionLatest<T> recorder = Actions.latest();
-                    Optional<Promise<Optional<Cons<T>>>> p = performActionAndAwaitCompletion(
-                            promise, recorder);
-                    if (p.isPresent())
-                        return Optional.of(Cons.cons(recorder.get(),
-                                ConcatTransformer.this.transform(p.get())));
-                    else {
-                        Promise<Optional<Cons<T>>> promise2 = stream.factory.create();
-                        Actions.ActionLatest<T> recorder2 = Actions.latest();
-                        Optional<Promise<Optional<Cons<T>>>> p2 = performActionAndAwaitCompletion(
-                                promise2, recorder2);
-                        if (p2.isPresent())
-                            return Optional.of(Cons.cons(recorder2.get(), p2.get()));
-                        else
-                            return Optional.absent();
-                    }
-                }
-
-                @Override
-                public A0 closeAction() {
-                    return promise.closeAction();
-                }
-
-                @Override
-                public Scheduler scheduler() {
-                    return promise.scheduler();
-                }
-            };
-        }
-
+        return Concat.concat(this, stream);
     }
 
     public <R> Stream<R> flatMap(F1<T, Stream<R>> f) {
