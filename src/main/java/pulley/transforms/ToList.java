@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import pulley.A0;
 import pulley.A1;
+import pulley.AbstractStreamPromise;
 import pulley.Actions;
 import pulley.Cons;
 import pulley.Promise;
 import pulley.Promises;
-import pulley.Scheduler;
 import pulley.Stream;
-import pulley.StreamPromise;
 import pulley.Transformer;
 import pulley.util.Optional;
 
@@ -22,7 +20,7 @@ public class ToList {
         Transformer<T, List<T>> transformer = new Transformer<T, List<T>>() {
             @Override
             public Promise<Optional<Cons<List<T>>>> transform(final Promise<Optional<Cons<T>>> p) {
-                return new StreamPromise<List<T>>() {
+                return new AbstractStreamPromise<T, List<T>>(p) {
 
                     @Override
                     public Optional<Cons<List<T>>> get() {
@@ -32,15 +30,6 @@ public class ToList {
                         return Optional.of(Cons.cons(list, Promises.<Cons<List<T>>> empty()));
                     }
 
-                    @Override
-                    public A0 closeAction() {
-                        return p.closeAction();
-                    }
-
-                    @Override
-                    public Scheduler scheduler() {
-                        return p.scheduler();
-                    }
                 };
             }
         };
