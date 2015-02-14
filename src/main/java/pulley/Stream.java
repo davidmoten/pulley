@@ -3,11 +3,11 @@ package pulley;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.transforms.Concat;
 import pulley.transforms.Filter;
+import pulley.transforms.ToList;
 import pulley.util.Optional;
 
 public class Stream<T> {
@@ -79,32 +79,7 @@ public class Stream<T> {
     }
 
     public Stream<List<T>> toList() {
-        Transformer<T, List<T>> transformer = new Transformer<T, List<T>>() {
-            @Override
-            public Promise<Optional<Cons<List<T>>>> transform(final Promise<Optional<Cons<T>>> p) {
-                return new StreamPromise<List<T>>() {
-
-                    @Override
-                    public Optional<Cons<List<T>>> get() {
-                        final List<T> list = Collections.synchronizedList(new ArrayList<T>());
-                        A1<T> addToList = Actions.addToList(list);
-                        forEach(p, addToList);
-                        return Optional.of(Cons.cons(list, Promises.<Cons<List<T>>> empty()));
-                    }
-
-                    @Override
-                    public A0 closeAction() {
-                        return p.closeAction();
-                    }
-
-                    @Override
-                    public Scheduler scheduler() {
-                        return p.scheduler();
-                    }
-                };
-            }
-        };
-        return transform(transformer);
+        return ToList.toList(this);
     }
 
     public Stream<List<T>> buffer(final int size) {
@@ -224,7 +199,7 @@ public class Stream<T> {
         forEach(factory.create(), action);
     }
 
-    private static <T> void forEach(Promise<Optional<Cons<T>>> promise, final A1<? super T> action) {
+    public static <T> void forEach(Promise<Optional<Cons<T>>> promise, final A1<? super T> action) {
         Optional<Promise<Optional<Cons<T>>>> p = Optional.of(promise);
         do {
             p = Promises.performActionAndAwaitCompletion(p.get(), action);
