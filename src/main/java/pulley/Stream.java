@@ -3,11 +3,11 @@ package pulley;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.transforms.Buffer;
 import pulley.transforms.Concat;
 import pulley.transforms.Filter;
+import pulley.transforms.Reduce;
 import pulley.transforms.ToList;
 import pulley.util.Optional;
 
@@ -88,48 +88,7 @@ public class Stream<T> {
     }
 
     public <R> Stream<R> reduce(R initial, F2<? super R, ? super T, ? extends R> reducer) {
-        return transform(new ReduceTransformer<T, R>(initial, reducer));
-    }
-
-    private static class ReduceTransformer<T, R> implements Transformer<T, R> {
-
-        private final R initial;
-        private final F2<? super R, ? super T, ? extends R> reducer;
-
-        public ReduceTransformer(R initial, F2<? super R, ? super T, ? extends R> reducer) {
-            this.initial = initial;
-            this.reducer = reducer;
-        }
-
-        @Override
-        public Promise<Optional<Cons<R>>> transform(final Promise<Optional<Cons<T>>> promise) {
-            return new StreamPromise<R>() {
-
-                @Override
-                public Optional<Cons<R>> get() {
-                    final AtomicReference<R> ref = new AtomicReference<R>(initial);
-                    A1<T> action = new A1<T>() {
-
-                        @Override
-                        public void call(T t) {
-                            ref.set(reducer.call(ref.get(), t));
-                        }
-                    };
-                    forEach(promise, action);
-                    return Optional.of(Cons.cons(ref.get(), Promises.<Cons<R>> empty()));
-                }
-
-                @Override
-                public A0 closeAction() {
-                    return promise.closeAction();
-                }
-
-                @Override
-                public Scheduler scheduler() {
-                    return promise.scheduler();
-                }
-            };
-        }
+        return Reduce.reduce(this, initial, reducer);
     }
 
     public Stream<Integer> count() {
