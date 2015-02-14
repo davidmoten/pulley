@@ -26,6 +26,10 @@ public class Result<T> {
         return throwable;
     }
 
+    public boolean isError() {
+        return throwable != null;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
