@@ -55,6 +55,7 @@ public class Promises {
                     action.call(value.get().head());
                     ref.set(Optional.of(value.get().tail()));
                 } else {
+                    // TODO only terminating operator should call this
                     p.closeAction().call();
                     ref.set(Optional.<Promise<Optional<Cons<T>>>> absent());
                 }
