@@ -5,6 +5,7 @@ import pulley.Actions;
 import pulley.Cons;
 import pulley.F1;
 import pulley.Promise;
+import pulley.Promises;
 import pulley.Scheduler;
 import pulley.Stream;
 import pulley.StreamPromise;
@@ -34,7 +35,7 @@ public class Filter {
                     Optional<Promise<Optional<Cons<T>>>> p = Optional.of(promise);
                     Actions.ActionLatest<T> recorder = Actions.latest();
                     do {
-                        p = Stream.performActionAndAwaitCompletion(p.get(), recorder);
+                        p = Promises.performActionAndAwaitCompletion(p.get(), recorder);
                     } while (p.isPresent() && !predicate.call(recorder.get()));
                     if (p.isPresent())
                         return Optional.of(Cons.cons(recorder.get(),

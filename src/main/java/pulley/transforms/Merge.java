@@ -68,7 +68,7 @@ public class Merge {
             Optional<Promise<Optional<Cons<Stream<T>>>>> p = Optional.of(streamPromise);
             if (!found.get()) {
                 do {
-                    p = Stream.performActionAndAwaitCompletion(p.get(), new A1<Stream<T>>() {
+                    p = Promises.performActionAndAwaitCompletion(p.get(), new A1<Stream<T>>() {
                         @Override
                         public void call(Stream<T> stream) {
                             Promise<Optional<Cons<T>>> q = stream.factory().create();

@@ -4,6 +4,7 @@ import pulley.A0;
 import pulley.Actions;
 import pulley.Cons;
 import pulley.Promise;
+import pulley.Promises;
 import pulley.Scheduler;
 import pulley.Stream;
 import pulley.StreamPromise;
@@ -30,7 +31,7 @@ public class Concat {
                 @Override
                 public Optional<Cons<T>> get() {
                     Actions.ActionLatest<T> recorder = Actions.latest();
-                    Optional<Promise<Optional<Cons<T>>>> p = Stream
+                    Optional<Promise<Optional<Cons<T>>>> p = Promises
                             .performActionAndAwaitCompletion(promise, recorder);
                     if (p.isPresent())
                         return Optional.of(Cons.cons(recorder.get(),
@@ -38,7 +39,7 @@ public class Concat {
                     else {
                         Promise<Optional<Cons<T>>> promise2 = stream.factory().create();
                         Actions.ActionLatest<T> recorder2 = Actions.latest();
-                        Optional<Promise<Optional<Cons<T>>>> p2 = Stream
+                        Optional<Promise<Optional<Cons<T>>>> p2 = Promises
                                 .performActionAndAwaitCompletion(promise2, recorder2);
                         if (p2.isPresent())
                             return Optional.of(Cons.cons(recorder2.get(), p2.get()));
@@ -58,6 +59,5 @@ public class Concat {
                 }
             };
         }
-
     }
 }

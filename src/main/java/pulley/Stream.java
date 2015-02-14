@@ -129,7 +129,7 @@ public class Stream<T> {
                     A1<T> addToList = Actions.addToList(list);
                     Optional<Promise<Optional<Cons<T>>>> p = Optional.of(promise);
                     do {
-                        p = performActionAndAwaitCompletion(p.get(), addToList);
+                        p = Promises.performActionAndAwaitCompletion(p.get(), addToList);
                     } while (p.isPresent() && list.size() < size);
                     if (list.size() == 0)
                         return Optional.absent();
@@ -227,36 +227,8 @@ public class Stream<T> {
     private static <T> void forEach(Promise<Optional<Cons<T>>> promise, final A1<? super T> action) {
         Optional<Promise<Optional<Cons<T>>>> p = Optional.of(promise);
         do {
-            p = performActionAndAwaitCompletion(p.get(), action);
+            p = Promises.performActionAndAwaitCompletion(p.get(), action);
         } while (p.isPresent());
-    }
-
-    public static <T> Optional<Promise<Optional<Cons<T>>>> performActionAndAwaitCompletion(
-            final Promise<Optional<Cons<T>>> p, final A1<? super T> action) {
-        final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<Optional<Promise<Optional<Cons<T>>>>> ref = new AtomicReference<Optional<Promise<Optional<Cons<T>>>>>(
-                null);
-        final A0 a = new A0() {
-            @Override
-            public void call() {
-                final Optional<Cons<T>> value = p.get();
-                if (value.isPresent()) {
-                    action.call(value.get().head());
-                    ref.set(Optional.of(value.get().tail()));
-                } else {
-                    p.closeAction().call();
-                    ref.set(Optional.<Promise<Optional<Cons<T>>>> absent());
-                }
-                latch.countDown();
-            }
-        };
-        p.scheduler().schedule(a);
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        return ref.get();
     }
 
     public void forEach() {
@@ -267,12 +239,12 @@ public class Stream<T> {
         final Promise<Optional<Cons<T>>> p = factory.create();
         final List<T> list = Collections.synchronizedList(new ArrayList<T>());
         A1<T> addToList = Actions.addToList(list);
-        final Optional<Promise<Optional<Cons<T>>>> p2 = performActionAndAwaitCompletion(p,
+        final Optional<Promise<Optional<Cons<T>>>> p2 = Promises.performActionAndAwaitCompletion(p,
                 addToList);
         if (list.size() == 0) {
             throw new RuntimeException("expected one item but no items emitted");
         } else {
-            performActionAndAwaitCompletion(p2.get(), addToList);
+            Promises.performActionAndAwaitCompletion(p2.get(), addToList);
             if (list.size() > 1)
                 throw new RuntimeException("expected one item but more than one emitted");
             else
