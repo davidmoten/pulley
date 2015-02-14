@@ -75,7 +75,7 @@ public class Actions {
         };
     }
 
-    public static <T> A1<T> sequence(final A1 action1, final A1 action2) {
+    public static <T> A1<T> sequence(final A1<T> action1, final A1<T> action2) {
         return new A1<T>() {
 
             @Override
