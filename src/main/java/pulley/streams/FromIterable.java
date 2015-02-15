@@ -10,10 +10,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.Cons;
 import pulley.Factory;
+import pulley.Promise;
 import pulley.Stream;
 import pulley.functions.F0;
 import pulley.promises.FunctionPromise;
-import pulley.promises.Promise;
 import pulley.util.Optional;
 
 public class FromIterable {

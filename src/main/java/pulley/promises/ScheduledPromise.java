@@ -1,5 +1,6 @@
 package pulley.promises;
 
+import pulley.Promise;
 import pulley.Scheduler;
 import pulley.actions.A0;
 

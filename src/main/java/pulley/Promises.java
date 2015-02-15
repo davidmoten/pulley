@@ -9,7 +9,6 @@ import pulley.actions.Actions;
 import pulley.functions.F0;
 import pulley.promises.CachingPromise;
 import pulley.promises.FunctionPromise;
-import pulley.promises.Promise;
 import pulley.promises.CompletedPromise.CompletedPromiseFactory;
 import pulley.util.Optional;
 

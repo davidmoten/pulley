@@ -1,6 +1,5 @@
-package pulley.promises;
+package pulley;
 
-import pulley.Scheduler;
 import pulley.actions.A0;
 
 public interface Promise<T> {

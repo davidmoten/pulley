@@ -2,6 +2,7 @@ package pulley.promises;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import pulley.Promise;
 import pulley.Scheduler;
 import pulley.actions.A0;
 

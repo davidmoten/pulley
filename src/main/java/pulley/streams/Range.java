@@ -7,13 +7,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import pulley.Cons;
 import pulley.Factory;
+import pulley.Promise;
 import pulley.Scheduler;
 import pulley.Schedulers;
 import pulley.Stream;
 import pulley.StreamPromise;
 import pulley.actions.A0;
 import pulley.actions.Actions;
-import pulley.promises.Promise;
 import pulley.util.Optional;
 
 public class Range {

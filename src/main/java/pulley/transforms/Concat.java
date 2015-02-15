@@ -2,13 +2,13 @@ package pulley.transforms;
 
 import pulley.AbstractStreamPromise;
 import pulley.Cons;
+import pulley.Promise;
 import pulley.Promises;
 import pulley.Stream;
 import pulley.StreamPromise;
 import pulley.Transformer;
 import pulley.actions.Actions;
 import pulley.actions.Actions.Latest;
-import pulley.promises.Promise;
 import pulley.util.Optional;
 
 public class Concat {
