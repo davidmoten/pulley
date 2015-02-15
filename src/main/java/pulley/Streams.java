@@ -37,8 +37,8 @@ public class Streams {
         }
     };
 
-    public static <T> Stream<T> just(T t) {
-        return stream(completedPromiseFactory(of(cons(t, Streams.<T> emptyPromise()))));
+    public static <T> Stream<T> just(T... t) {
+        return from(Arrays.asList(t));
     }
 
     @SuppressWarnings("unchecked")

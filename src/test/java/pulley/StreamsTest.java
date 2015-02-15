@@ -62,7 +62,7 @@ public class StreamsTest {
 
     @Test
     public void testIterable() {
-        Streams.from(Arrays.asList(1, 2)).forEach(println());
+        Streams.just(1, 2).forEach(println());
     }
 
     @Test
@@ -97,13 +97,13 @@ public class StreamsTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testMergeSychronous() {
-        Streams.merge(Arrays.asList(Streams.from(Arrays.asList(1, 2, 3)),
-                Streams.from(Arrays.asList(4, 5, 6))));
+        Streams.merge(asList(Streams.just(1, 2, 3), Streams.just(4, 5, 6)));
     }
 
     @Test
     public void testFilterMixOfMatchAndNoMatch() {
-        List<Integer> list = Streams.from(Arrays.asList(1, 2, 3, 4, 5))
+        List<Integer> list = Streams.just(1, 2, 3, 4, 5)
+        //
                 .filter(new Predicate<Integer>() {
                     @Override
                     public Boolean call(Integer t) {
@@ -115,7 +115,8 @@ public class StreamsTest {
 
     @Test
     public void testFilterAll() {
-        List<Integer> list = Streams.from(Arrays.asList(1, 2, 3, 4, 5))
+        List<Integer> list = Streams.just(1, 2, 3, 4, 5)
+        //
                 .filter(new Predicate<Integer>() {
                     @Override
                     public Boolean call(Integer t) {
@@ -127,7 +128,8 @@ public class StreamsTest {
 
     @Test
     public void testFilterNone() {
-        List<Integer> list = Streams.from(Arrays.asList(1, 2, 3, 4, 5))
+        List<Integer> list = Streams.just(1, 2, 3, 4, 5)
+        //
                 .filter(new Predicate<Integer>() {
                     @Override
                     public Boolean call(Integer t) {
@@ -242,7 +244,7 @@ public class StreamsTest {
 
     @Test
     public void testReduce() {
-        assertEquals(4, (int) Streams.from(asList(2, 4, 6, 8)).count().single());
+        assertEquals(4, (int) Streams.just(2, 4, 6, 8).count().single());
     }
 
     @Test
