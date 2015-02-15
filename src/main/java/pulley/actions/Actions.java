@@ -1,4 +1,4 @@
-package pulley;
+package pulley.actions;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pulley.TimeProvider;
 import pulley.util.Optional;
 
 public class Actions {

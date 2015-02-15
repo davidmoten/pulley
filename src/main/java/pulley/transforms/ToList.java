@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import pulley.A1;
 import pulley.AbstractStreamPromise;
-import pulley.Actions;
 import pulley.Cons;
 import pulley.Promise;
 import pulley.Stream;
 import pulley.Transformer;
+import pulley.actions.A1;
+import pulley.actions.Actions;
 import pulley.util.Optional;
 
 public class ToList {

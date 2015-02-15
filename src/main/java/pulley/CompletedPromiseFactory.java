@@ -1,5 +1,8 @@
 package pulley;
 
+import pulley.actions.A0;
+import pulley.actions.Actions;
+
 public class CompletedPromiseFactory<T> implements Factory<Promise<T>> {
 
 	private final T t;

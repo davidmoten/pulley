@@ -9,6 +9,8 @@ import static pulley.util.Optional.of;
 import java.util.Arrays;
 import java.util.List;
 
+import pulley.actions.A0;
+import pulley.actions.Actions;
 import pulley.streams.FromIterable;
 import pulley.streams.Range;
 import pulley.transforms.Merge;

@@ -1,14 +1,14 @@
 package pulley.transforms;
 
-import pulley.A1;
 import pulley.AbstractStreamPromise;
-import pulley.Actions;
-import pulley.Actions.Latest;
 import pulley.Cons;
 import pulley.Promise;
 import pulley.Promises;
 import pulley.Stream;
 import pulley.Transformer;
+import pulley.actions.A1;
+import pulley.actions.Actions;
+import pulley.actions.Actions.Latest;
 import pulley.util.Optional;
 
 public class OnNext {

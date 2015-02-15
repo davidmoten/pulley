@@ -2,13 +2,13 @@ package pulley.transforms;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import pulley.A1;
 import pulley.AbstractStreamPromise;
 import pulley.Cons;
 import pulley.F2;
 import pulley.Promise;
 import pulley.Stream;
 import pulley.Transformer;
+import pulley.actions.A1;
 import pulley.util.Optional;
 
 public class Reduce {

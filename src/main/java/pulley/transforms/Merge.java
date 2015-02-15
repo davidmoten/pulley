@@ -9,8 +9,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import pulley.A0;
-import pulley.A1;
 import pulley.Cons;
 import pulley.Factory;
 import pulley.Promise;
@@ -19,6 +17,8 @@ import pulley.Scheduler;
 import pulley.Schedulers;
 import pulley.Stream;
 import pulley.Streams;
+import pulley.actions.A0;
+import pulley.actions.A1;
 import pulley.util.Optional;
 
 public class Merge {

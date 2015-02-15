@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import pulley.actions.A0;
+import pulley.actions.A1;
+import pulley.actions.Actions;
 import pulley.transforms.Buffer;
 import pulley.transforms.Concat;
 import pulley.transforms.Filter;
@@ -97,7 +100,7 @@ public class Stream<T> {
         return Streams.merge(map(f));
     }
 
-    public void forEach(A1<? super T> action) {
+    public void forEach(A1<? super T> action) {// //
         forEach(factory.create(), action);
     }
 

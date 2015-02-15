@@ -1,5 +1,8 @@
 package pulley;
 
+import pulley.actions.A0;
+import pulley.actions.Actions;
+
 public class FunctionPromise<T> implements Promise<T> {
 
 	private final F0<T> f;

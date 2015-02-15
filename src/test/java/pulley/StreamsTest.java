@@ -3,7 +3,7 @@ package pulley;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static pulley.Actions.println;
+import static pulley.actions.Actions.println;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,7 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
-import pulley.Actions.Latest;
+import pulley.actions.Actions;
+import pulley.actions.Actions.Latest;
 
 public class StreamsTest {
 

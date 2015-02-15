@@ -5,6 +5,9 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import pulley.actions.A0;
+import pulley.actions.Actions;
+
 public class SchedulerTrampoline implements Scheduler {
 
     private final Deque<A0> queue = new ConcurrentLinkedDeque<A0>();

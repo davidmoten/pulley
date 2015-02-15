@@ -1,8 +1,6 @@
 package pulley.transforms;
 
 import pulley.AbstractStreamPromise;
-import pulley.Actions;
-import pulley.Actions.Latest;
 import pulley.Cons;
 import pulley.F1;
 import pulley.Promise;
@@ -10,6 +8,8 @@ import pulley.Promises;
 import pulley.Stream;
 import pulley.StreamPromise;
 import pulley.Transformer;
+import pulley.actions.Actions;
+import pulley.actions.Actions.Latest;
 import pulley.util.Optional;
 
 public class Filter {
