@@ -6,6 +6,7 @@ import static pulley.util.Optional.absent;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import pulley.actions.A0;
 import pulley.actions.A1;
@@ -13,6 +14,7 @@ import pulley.actions.Actions;
 import pulley.functions.F0;
 import pulley.functions.F1;
 import pulley.streams.FromIterable;
+import pulley.streams.Interval;
 import pulley.streams.Range;
 import pulley.transforms.Merge;
 import pulley.util.Optional;
@@ -80,4 +82,11 @@ public class Streams {
         return Util.notImplemented();
     }
 
+    public static Stream<Long> interval(long delay, TimeUnit unit) {
+        return interval(delay, unit, Schedulers.computation());
+    }
+
+    public static Stream<Long> interval(long delay, TimeUnit unit, Scheduler scheduler) {
+        return Interval.create(delay, unit, scheduler);
+    }
 }

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
@@ -261,5 +262,10 @@ public class StreamsTest {
                 .doOnNext(Actions.increment(j)).forEach();
         assertEquals(4, i.get());
         assertEquals(4, j.get());
+    }
+
+    @Test
+    public void testInterval() {
+        Streams.interval(1, TimeUnit.SECONDS, Schedulers.trampoline()).forEach(println());
     }
 }
