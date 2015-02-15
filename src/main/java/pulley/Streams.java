@@ -56,6 +56,21 @@ public class Streams {
         return from(Arrays.asList(t1, t2));
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> Stream<T> just(T t1) {
+        return from(Arrays.asList(t1));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Stream<T> just(T t1, T t2, T t3) {
+        return from(Arrays.asList(t1, t2, t3));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Stream<T> just(T t1, T t2, T t3, T t4) {
+        return from(Arrays.asList(t1, t2, t3, t4));
+    }
+
     public static <T> Stream<T> from(Iterable<T> iterable) {
         return FromIterable.create(iterable);
     }
