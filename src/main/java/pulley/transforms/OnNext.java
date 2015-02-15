@@ -37,7 +37,7 @@ public class OnNext {
                             .performActionAndAwaitCompletion(promise, both);
                     if (p.isPresent() && latest.get().isPresent())
                         return Optional.of(Cons.cons(latest.get().get(),
-                                OnNextTransformer.this.transform(p.get())));
+                                Promises.deferTransformation(p.get(), OnNextTransformer.this)));
                     else if (latest.get().isPresent())
                         return Optional.of(Cons.cons(latest.get().get()));
                     else

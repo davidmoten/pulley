@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import pulley.actions.Actions;
@@ -265,6 +266,12 @@ public class StreamsTest {
     }
 
     @Test
+    public void testTake() {
+        assertEquals(asList(1, 2, 3), Streams.just(1, 2, 3, 4).take(3).toList().single());
+    }
+
+    @Test
+    @Ignore
     public void testInterval() {
         Streams.interval(1, TimeUnit.SECONDS, Schedulers.trampoline()).forEach(println());
     }

@@ -16,6 +16,7 @@ import pulley.transforms.Filter;
 import pulley.transforms.Map;
 import pulley.transforms.OnNext;
 import pulley.transforms.Reduce;
+import pulley.transforms.Take;
 import pulley.transforms.ToList;
 import pulley.util.Optional;
 
@@ -101,6 +102,10 @@ public class Stream<T> {
 
     public <R> Stream<R> flatMap(F1<T, Stream<R>> f) {
         return Streams.merge(map(f));
+    }
+
+    public Stream<T> take(long n) {
+        return Take.take(this, n);
     }
 
     public void forEach(A1<? super T> action) {// //

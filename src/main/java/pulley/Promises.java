@@ -1,6 +1,7 @@
 package pulley;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.actions.A0;
@@ -8,8 +9,8 @@ import pulley.actions.A1;
 import pulley.actions.Actions;
 import pulley.functions.F0;
 import pulley.promises.CachingPromise;
-import pulley.promises.FunctionPromise;
 import pulley.promises.CompletedPromise.CompletedPromiseFactory;
+import pulley.promises.FunctionPromise;
 import pulley.util.Optional;
 
 public class Promises {
@@ -76,5 +77,34 @@ public class Promises {
             throw new RuntimeException(e);
         }
         return ref.get();
+    }
+
+    public static <T> Promise<Optional<Cons<T>>> deferTransformation(
+            final Promise<Optional<Cons<T>>> promise, final Transformer<T, T> transformer) {
+        return new StreamPromise<T>() {
+            AtomicBoolean ready = new AtomicBoolean(false);
+            volatile Promise<Optional<Cons<T>>> p;
+
+            private Promise<Optional<Cons<T>>> promise() {
+                if (ready.compareAndSet(false, true))
+                    p = transformer.transform(promise);
+                return p;
+            }
+
+            @Override
+            public Optional<Cons<T>> get() {
+                return promise().get();
+            }
+
+            @Override
+            public A0 closeAction() {
+                return promise().closeAction();
+            }
+
+            @Override
+            public Scheduler scheduler() {
+                return promise().scheduler();
+            }
+        };
     }
 }
