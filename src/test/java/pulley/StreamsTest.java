@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static pulley.actions.Actions.println;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,7 +13,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import pulley.actions.Actions;
@@ -292,13 +292,16 @@ public class StreamsTest {
 
     @Test
     public void testTake3ofMax() {
-        assertEquals(asList(1, 2, 3), Streams.range(1, Integer.MAX_VALUE).take(3).toList().single());
+        assertEquals(asList(1, 2, 3), Streams.range(1, 1000000).take(3).toList().single());
     }
 
     @Test
-    @Ignore
+    // @Ignore
     public void testInterval() {
-        Streams.interval(100, TimeUnit.MILLISECONDS, Schedulers.trampoline()).take(3)
-                .forEach(println());
+        long t = System.currentTimeMillis();
+        List<Long> list = Streams.interval(100, TimeUnit.MILLISECONDS, Schedulers.immediate())
+                .take(3).toList().single();
+        assertEquals(asList(0, 1, 2), new ArrayList<Long>(list));
+        assertTrue(System.currentTimeMillis() - t > 300);
     }
 }
