@@ -54,6 +54,11 @@ public class StreamsTest {
         assertEquals(asList(2, 3, 4), Streams.just(1, 2, 3).map(plusOne()).toList().single());
     }
 
+    @Test
+    public void testMapOnEmpty() {
+        assertTrue(Streams.<Integer> empty().map(plusOne()).toList().single().isEmpty());
+    }
+
     @Test(expected = RuntimeException.class)
     public void testSingleFailsWithTwoItems() {
         Streams.just(1, 2).single();
