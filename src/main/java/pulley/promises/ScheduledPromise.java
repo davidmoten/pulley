@@ -1,5 +1,6 @@
-package pulley;
+package pulley.promises;
 
+import pulley.Scheduler;
 import pulley.actions.A0;
 
 public class ScheduledPromise<T> implements Promise<T> {

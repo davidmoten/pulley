@@ -1,5 +1,6 @@
 package pulley;
 
+import pulley.promises.Promise;
 import pulley.util.Optional;
 
 public class Cons<T> {

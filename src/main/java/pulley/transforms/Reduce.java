@@ -4,11 +4,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.AbstractStreamPromise;
 import pulley.Cons;
-import pulley.Promise;
 import pulley.Stream;
 import pulley.Transformer;
 import pulley.actions.A1;
 import pulley.functions.F2;
+import pulley.promises.Promise;
 import pulley.util.Optional;
 
 public class Reduce {

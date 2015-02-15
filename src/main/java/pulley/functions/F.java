@@ -1,14 +1,13 @@
 package pulley.functions;
 
 import pulley.Cons;
-import pulley.Promise;
-import pulley.Result;
 import pulley.Scheduler;
 import pulley.Schedulers;
 import pulley.Stream;
 import pulley.Streams;
 import pulley.actions.A0;
 import pulley.actions.Actions;
+import pulley.promises.Promise;
 import pulley.util.Optional;
 
 public final class F {
@@ -73,17 +72,4 @@ public final class F {
         };
     }
 
-    public static <T, R> F1<T, Result<R>> result(final F1<T, R> f) {
-        return new F1<T, Result<R>>() {
-
-            @Override
-            public Result<R> call(T t) {
-                try {
-                    return Result.value(f.call(t));
-                } catch (Throwable e) {
-                    return Result.error(e);
-                }
-            }
-        };
-    }
 }

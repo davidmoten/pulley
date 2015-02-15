@@ -9,6 +9,8 @@ import pulley.actions.A1;
 import pulley.actions.Actions;
 import pulley.functions.F1;
 import pulley.functions.F2;
+import pulley.promises.Promise;
+import pulley.promises.ScheduledPromise;
 import pulley.transforms.Buffer;
 import pulley.transforms.Concat;
 import pulley.transforms.Filter;

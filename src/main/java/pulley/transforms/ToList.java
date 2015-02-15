@@ -6,11 +6,11 @@ import java.util.List;
 
 import pulley.AbstractStreamPromise;
 import pulley.Cons;
-import pulley.Promise;
 import pulley.Stream;
 import pulley.Transformer;
 import pulley.actions.A1;
 import pulley.actions.Actions;
+import pulley.promises.Promise;
 import pulley.util.Optional;
 
 public class ToList {

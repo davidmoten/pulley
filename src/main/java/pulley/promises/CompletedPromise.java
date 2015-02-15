@@ -1,5 +1,8 @@
-package pulley;
+package pulley.promises;
 
+import pulley.Factory;
+import pulley.Scheduler;
+import pulley.Schedulers;
 import pulley.actions.A0;
 import pulley.actions.Actions;
 

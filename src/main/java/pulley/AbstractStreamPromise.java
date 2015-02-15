@@ -1,6 +1,7 @@
 package pulley;
 
 import pulley.actions.A0;
+import pulley.promises.Promise;
 import pulley.util.Optional;
 
 public abstract class AbstractStreamPromise<T, R> implements StreamPromise<R> {
