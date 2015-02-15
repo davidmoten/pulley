@@ -11,6 +11,7 @@ public class CachingPromise<T> implements Promise<T> {
     private final Promise<T> promise;
     private final AtomicBoolean calculated = new AtomicBoolean(false);
     private volatile T value;
+    private volatile Throwable throwable;
 
     public CachingPromise(Promise<T> promise) {
         this.promise = promise;
@@ -18,8 +19,19 @@ public class CachingPromise<T> implements Promise<T> {
 
     @Override
     public T get() {
-        if (calculated.compareAndSet(false, true))
-            value = promise.get();
+        if (calculated.compareAndSet(false, true)) {
+            try {
+                value = promise.get();
+            } catch (Throwable e) {
+                throwable = e;
+            }
+        }
+        if (throwable != null) {
+            if (throwable instanceof RuntimeException)
+                throw (RuntimeException) throwable;
+            else
+                throw (Error) throwable;
+        }
         return value;
     }
 
