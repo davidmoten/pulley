@@ -116,7 +116,38 @@ public class StreamsTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testMergeSychronous() {
-        Streams.merge(asList(Streams.just(1, 2, 3), Streams.just(4, 5, 6)));
+        assertEquals(asList(1, 2, 3, 4, 5, 6),
+                Streams.merge(asList(Streams.just(1, 2, 3), Streams.just(4, 5, 6))).toList()
+                        .single());
+    }
+
+    @Test
+    public void testFlatMapSynchronous() {
+        List<Integer> source = Streams.range(1, 10).toList().single();
+        List<Integer> list = Streams.from(source).flatMap(F.<Integer> wrap()).toList().single();
+        assertEquals(source, list);
+    }
+
+    @Test
+    public void testFlatMapAsynchronous() {
+        List<Integer> source = Streams.range(1, 10).toList().single();
+        List<Integer> list = Streams.from(source).flatMap(new F1<Integer, Stream<Integer>>() {
+            @Override
+            public Stream<Integer> call(Integer t) {
+                return Streams.just(t).scheduleOn(Schedulers.computation());
+            }
+        }).toList().single();
+        assertEquals(new HashSet<Integer>(source), new HashSet<Integer>(list));
+    }
+
+    // @Test
+    public void testFlatMapLots() {
+        Streams.range(1, 10000).flatMap(new F1<Integer, Stream<Integer>>() {
+            @Override
+            public Stream<Integer> call(Integer t) {
+                return Streams.just(t).scheduleOn(Schedulers.computation());
+            }
+        }).forEach();
     }
 
     @Test
@@ -196,35 +227,6 @@ public class StreamsTest {
     public void testConcatWithEmptyAfter() {
         assertEquals(asList(1), Streams.just(1).concatWith(Streams.<Integer> empty()).toList()
                 .single());
-    }
-
-    @Test
-    public void testFlatMapSynchronous() {
-        List<Integer> source = Streams.range(1, 10).toList().single();
-        List<Integer> list = Streams.from(source).flatMap(F.<Integer> wrap()).toList().single();
-        assertEquals(source, list);
-    }
-
-    @Test
-    public void testFlatMapAsynchronous() {
-        List<Integer> source = Streams.range(1, 10).toList().single();
-        List<Integer> list = Streams.from(source).flatMap(new F1<Integer, Stream<Integer>>() {
-            @Override
-            public Stream<Integer> call(Integer t) {
-                return Streams.just(t).scheduleOn(Schedulers.computation());
-            }
-        }).toList().single();
-        assertEquals(new HashSet<Integer>(source), new HashSet<Integer>(list));
-    }
-
-    // @Test
-    public void testFlatMapLots() {
-        Streams.range(1, 10000).flatMap(new F1<Integer, Stream<Integer>>() {
-            @Override
-            public Stream<Integer> call(Integer t) {
-                return Streams.just(t).scheduleOn(Schedulers.computation());
-            }
-        }).forEach();
     }
 
     @SuppressWarnings("unchecked")
