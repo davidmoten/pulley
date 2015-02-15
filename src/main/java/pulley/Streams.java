@@ -8,7 +8,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import pulley.actions.A0;
+import pulley.actions.A1;
 import pulley.actions.Actions;
+import pulley.functions.F0;
+import pulley.functions.F1;
 import pulley.streams.FromIterable;
 import pulley.streams.Range;
 import pulley.transforms.Merge;
@@ -70,6 +73,11 @@ public class Streams {
 
     public static Stream<Integer> range(final int start, final int count) {
         return Range.create(start, count);
+    }
+
+    public static <Resource, T> Stream<T> using(F0<Resource> resourceFactory,
+            F1<Resource, Stream<T>> streamFactory, A1<Resource> disposeAction) {
+        return Util.notImplemented();
     }
 
 }

@@ -49,6 +49,11 @@ public class StreamsTest {
         };
     }
 
+    @Test
+    public void testMapOnMoreThanOne() {
+        assertEquals(asList(2, 3, 4), Streams.just(1, 2, 3).map(plusOne()).toList().single());
+    }
+
     @Test(expected = RuntimeException.class)
     public void testSingleFailsWithTwoItems() {
         Streams.just(1, 2).single();
