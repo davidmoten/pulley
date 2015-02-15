@@ -1,10 +1,8 @@
 package pulley;
 
-import static pulley.Cons.cons;
 import static pulley.Promises.completedPromiseFactory;
 import static pulley.Stream.stream;
 import static pulley.util.Optional.absent;
-import static pulley.util.Optional.of;
 
 import java.util.Arrays;
 import java.util.List;
