@@ -2,11 +2,11 @@ package pulley.transforms;
 
 import pulley.AbstractStreamPromise;
 import pulley.Cons;
-import pulley.F;
-import pulley.F1;
 import pulley.Promise;
 import pulley.Stream;
 import pulley.Transformer;
+import pulley.functions.F;
+import pulley.functions.F1;
 import pulley.util.Optional;
 
 public class Map {

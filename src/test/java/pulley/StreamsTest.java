@@ -15,6 +15,9 @@ import org.junit.Test;
 
 import pulley.actions.Actions;
 import pulley.actions.Actions.Latest;
+import pulley.functions.F;
+import pulley.functions.F1;
+import pulley.functions.Predicate;
 
 public class StreamsTest {
 

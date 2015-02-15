@@ -7,6 +7,8 @@ import java.util.List;
 import pulley.actions.A0;
 import pulley.actions.A1;
 import pulley.actions.Actions;
+import pulley.functions.F1;
+import pulley.functions.F2;
 import pulley.transforms.Buffer;
 import pulley.transforms.Concat;
 import pulley.transforms.Filter;

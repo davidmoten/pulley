@@ -2,6 +2,7 @@ package pulley;
 
 import pulley.actions.A0;
 import pulley.actions.Actions;
+import pulley.functions.F0;
 
 public class FunctionPromise<T> implements Promise<T> {
 

@@ -9,11 +9,11 @@ import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.Cons;
-import pulley.F0;
 import pulley.Factory;
 import pulley.FunctionPromise;
 import pulley.Promise;
 import pulley.Stream;
+import pulley.functions.F0;
 import pulley.util.Optional;
 
 public class FromIterable {

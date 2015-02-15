@@ -1,5 +1,12 @@
-package pulley;
+package pulley.functions;
 
+import pulley.Cons;
+import pulley.Promise;
+import pulley.Result;
+import pulley.Scheduler;
+import pulley.Schedulers;
+import pulley.Stream;
+import pulley.Streams;
 import pulley.actions.A0;
 import pulley.actions.Actions;
 import pulley.util.Optional;
