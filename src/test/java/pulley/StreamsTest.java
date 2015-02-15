@@ -266,13 +266,39 @@ public class StreamsTest {
     }
 
     @Test
-    public void testTake() {
+    public void testTake3of4() {
         assertEquals(asList(1, 2, 3), Streams.just(1, 2, 3, 4).take(3).toList().single());
+    }
+
+    @Test
+    public void testTake3of2() {
+        assertEquals(asList(1, 2), Streams.just(1, 2).take(3).toList().single());
+    }
+
+    @Test
+    public void testTake3of3() {
+        assertEquals(asList(1, 2, 3), Streams.just(1, 2, 3).take(3).toList().single());
+    }
+
+    @Test
+    public void testTake0of3() {
+        assertTrue(Streams.just(1, 2, 3).take(0).toList().single().isEmpty());
+    }
+
+    @Test
+    public void testTake3of0() {
+        assertTrue(Streams.empty().take(3).toList().single().isEmpty());
+    }
+
+    @Test
+    public void testTake3ofMax() {
+        assertEquals(asList(1, 2, 3), Streams.range(1, Integer.MAX_VALUE).take(3).toList().single());
     }
 
     @Test
     @Ignore
     public void testInterval() {
-        Streams.interval(1, TimeUnit.SECONDS, Schedulers.trampoline()).forEach(println());
+        Streams.interval(100, TimeUnit.MILLISECONDS, Schedulers.trampoline()).take(3)
+                .forEach(println());
     }
 }
