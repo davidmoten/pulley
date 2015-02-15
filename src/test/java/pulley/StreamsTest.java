@@ -296,10 +296,18 @@ public class StreamsTest {
     }
 
     @Test
-    // @Ignore
-    public void testInterval() {
+    public void testIntervalSynchronous() {
         long t = System.currentTimeMillis();
         List<Long> list = Streams.interval(100, TimeUnit.MILLISECONDS, Schedulers.immediate())
+                .take(3).toList().single();
+        assertEquals(asList(0L, 1L, 2L), list);
+        assertTrue(System.currentTimeMillis() - t > 300);
+    }
+
+    @Test
+    public void testIntervalAsynchronous() {
+        long t = System.currentTimeMillis();
+        List<Long> list = Streams.interval(100, TimeUnit.MILLISECONDS, Schedulers.computation())
                 .take(3).toList().single();
         assertEquals(asList(0L, 1L, 2L), list);
         assertTrue(System.currentTimeMillis() - t > 300);
