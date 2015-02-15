@@ -17,6 +17,7 @@ import pulley.actions.Actions;
 import pulley.actions.Actions.Latest;
 import pulley.functions.F;
 import pulley.functions.F1;
+import pulley.functions.Functions;
 import pulley.functions.Predicate;
 
 public class StreamsTest {
@@ -165,38 +166,22 @@ public class StreamsTest {
 
     @Test
     public void testFilterAll() {
-        List<Integer> list = Streams.just(1, 2, 3, 4, 5)
-        //
-                .filter(new Predicate<Integer>() {
-                    @Override
-                    public Boolean call(Integer t) {
-                        return false;
-                    }
-                }).toList().single();
+        List<Integer> list = Streams.just(1, 2, 3, 4, 5).filter(Functions.alwaysFalse()).toList()
+                .single();
         assertTrue(list.isEmpty());
     }
 
     @Test
     public void testFilterNone() {
-        List<Integer> list = Streams.just(1, 2, 3, 4, 5)
-        //
-                .filter(new Predicate<Integer>() {
-                    @Override
-                    public Boolean call(Integer t) {
-                        return true;
-                    }
-                }).toList().single();
+        List<Integer> list = Streams.just(1, 2, 3, 4, 5).filter(Functions.alwaysTrue()).toList()
+                .single();
         assertEquals(Arrays.asList(1, 2, 3, 4, 5), list);
     }
 
     @Test
     public void testFilterOnEmpty() {
-        List<Integer> list = Streams.<Integer> empty().filter(new Predicate<Integer>() {
-            @Override
-            public Boolean call(Integer t) {
-                return true;
-            }
-        }).toList().single();
+        List<Integer> list = Streams.<Integer> empty().filter(Functions.alwaysTrue()).toList()
+                .single();
         assertTrue(list.isEmpty());
     }
 
