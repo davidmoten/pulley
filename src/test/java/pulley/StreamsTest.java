@@ -301,7 +301,7 @@ public class StreamsTest {
         long t = System.currentTimeMillis();
         List<Long> list = Streams.interval(100, TimeUnit.MILLISECONDS, Schedulers.immediate())
                 .take(3).toList().single();
-        assertEquals(asList(0, 1, 2), new ArrayList<Long>(list));
+        assertEquals(asList(0L, 1L, 2L), list);
         assertTrue(System.currentTimeMillis() - t > 300);
     }
 }
