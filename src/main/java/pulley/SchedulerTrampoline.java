@@ -35,8 +35,8 @@ public class SchedulerTrampoline implements Scheduler {
     }
 
     @Override
-    public void schedule(A0 action, long duration, TimeUnit unit) {
-        schedule(new Actions.ActionSleeping(this, action, duration, unit));
+    public void schedule(A0 action, long delay, TimeUnit unit) {
+        schedule(new Actions.ActionSleeping(this, action, delay, unit));
     }
 
     @Override
