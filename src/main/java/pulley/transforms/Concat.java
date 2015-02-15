@@ -11,7 +11,8 @@ import pulley.actions.Actions;
 import pulley.actions.Actions.Latest;
 import pulley.util.Optional;
 
-public class Concat {
+public final class Concat {
+
     public static <T> Stream<T> concat(Stream<T> source, final Stream<T> stream) {
         return source.transform(new ConcatTransformer<T>(stream));
     }

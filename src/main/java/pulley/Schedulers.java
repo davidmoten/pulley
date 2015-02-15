@@ -6,11 +6,11 @@ public final class Schedulers {
     private static final Scheduler IMMEDIATE = new SchedulerImmediate();
     private static final Scheduler COMPUTATION = new SchedulerComputation();
 
-    public static final Scheduler trampoline() {
+    public static Scheduler trampoline() {
         return TRAMPOLINE;
     }
 
-    public static final Scheduler immediate() {
+    public static Scheduler immediate() {
         return IMMEDIATE;
     }
 

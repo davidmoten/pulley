@@ -14,7 +14,7 @@ import pulley.actions.A1;
 import pulley.actions.Actions;
 import pulley.util.Optional;
 
-public class Buffer {
+public final class Buffer {
 
     public static <T> Stream<List<T>> buffer(Stream<T> stream, final int size) {
         return stream.transform(new BufferTransformer<T>(size));
