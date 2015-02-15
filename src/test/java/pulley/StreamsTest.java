@@ -69,6 +69,11 @@ public class StreamsTest {
         assertEquals(1, (int) Streams.just(1).single());
     }
 
+    @Test(expected = RuntimeException.class)
+    public void testSingleFailsWithNoItems() {
+        Streams.empty().single();
+    }
+
     @Test
     public void testTwoPrinted() {
         Streams.just(3, 4).forEach(println());
