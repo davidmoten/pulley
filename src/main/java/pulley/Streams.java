@@ -52,13 +52,13 @@ public class Streams {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Stream<T> just(T t1, T t2) {
-        return from(Arrays.asList(t1, t2));
+    public static <T> Stream<T> just(T t1) {
+        return from(Arrays.asList(t1));
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Stream<T> just(T t1) {
-        return from(Arrays.asList(t1));
+    public static <T> Stream<T> just(T t1, T t2) {
+        return from(Arrays.asList(t1, t2));
     }
 
     @SuppressWarnings("unchecked")
