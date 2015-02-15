@@ -1,7 +1,6 @@
 package pulley;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.actions.A0;
