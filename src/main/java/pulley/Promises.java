@@ -79,32 +79,4 @@ public class Promises {
         return ref.get();
     }
 
-    public static <T> Promise<Optional<Cons<T>>> deferTransformation(
-            final Promise<Optional<Cons<T>>> promise, final Transformer<T, T> transformer) {
-        return new StreamPromise<T>() {
-            AtomicBoolean ready = new AtomicBoolean(false);
-            volatile Promise<Optional<Cons<T>>> p;
-
-            private Promise<Optional<Cons<T>>> promise() {
-                if (ready.compareAndSet(false, true))
-                    p = transformer.transform(promise);
-                return p;
-            }
-
-            @Override
-            public Optional<Cons<T>> get() {
-                return promise().get();
-            }
-
-            @Override
-            public A0 closeAction() {
-                return promise().closeAction();
-            }
-
-            @Override
-            public Scheduler scheduler() {
-                return promise().scheduler();
-            }
-        };
-    }
 }
