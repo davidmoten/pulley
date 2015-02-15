@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static pulley.actions.Actions.println;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -307,8 +306,7 @@ public class StreamsTest {
     @Test
     public void testIntervalAsynchronous() {
         long t = System.currentTimeMillis();
-        List<Long> list = Streams.interval(100, TimeUnit.MILLISECONDS, Schedulers.computation())
-                .take(3).toList().single();
+        List<Long> list = Streams.interval(100, TimeUnit.MILLISECONDS).take(3).toList().single();
         assertEquals(asList(0L, 1L, 2L), list);
         assertTrue(System.currentTimeMillis() - t > 300);
     }
