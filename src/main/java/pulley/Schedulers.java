@@ -1,9 +1,5 @@
 package pulley;
 
-import java.util.concurrent.CountDownLatch;
-
-import pulley.actions.A0;
-
 public final class Schedulers {
 
     private static final Scheduler TRAMPOLINE = new SchedulerTrampoline();

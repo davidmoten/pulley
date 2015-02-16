@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import pulley.actions.A0;
 import pulley.actions.A1;
 import pulley.actions.Actions;
+import pulley.functions.F;
 import pulley.functions.F0;
 import pulley.promises.CachingPromise;
 import pulley.promises.CompletedPromise.CompletedPromiseFactory;
@@ -81,32 +82,27 @@ public class Promises {
             throw new RuntimeException(e);
         }
         return ref.get();
-
     }
 
-    public static <T> Promise<Result<T>> result(final Promise<T> promise) {
-        return new Promise<Result<T>>() {
-            @Override
-            public Result<T> get() {
-                try {
-                    return Result.of(promise.get());
-                } catch (Throwable e) {
-                    return Result.error(e);
-                }
-            }
+    public static <T> F0<T> toF0(final Promise<T> promise) {
+        return new F0<T>() {
 
             @Override
-            public A0 closeAction() {
-                return promise.closeAction();
-            }
-
-            @Override
-            public Scheduler scheduler() {
-                return promise.scheduler();
+            public T call() {
+                return promise.get();
             }
         };
     }
 
+    /**
+     * Gets the result of the promise and if the result value is present
+     * performs the action with it as well, all on the Scheduler nominated by
+     * the promise.
+     * 
+     * @param promise
+     * @param action
+     * @return
+     */
     public static <T> Result<T> get(final Promise<T> promise, A1<T> action) {
         PromiseGettingAction<T> a = new PromiseGettingAction<T>(promise, action);
         promise.scheduler().schedule(a);
@@ -118,9 +114,9 @@ public class Promises {
         volatile Result<T> result = Result.absent();
         private final Promise<T> promise;
         private final CountDownLatch latch;
-        private final A1<T> action;
+        private final A1<? super T> action;
 
-        PromiseGettingAction(Promise<T> promise, A1<T> action) {
+        PromiseGettingAction(Promise<T> promise, A1<? super T> action) {
             this.promise = promise;
             this.action = action;
             this.latch = new CountDownLatch(1);
@@ -128,7 +124,7 @@ public class Promises {
 
         @Override
         public void call() {
-            result = Promises.result(promise).get();
+            result = F.result(F.compose(toF0(promise), F.map(action))).call();
             latch.countDown();
         }
 

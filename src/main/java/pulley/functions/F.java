@@ -8,6 +8,7 @@ import pulley.Schedulers;
 import pulley.Stream;
 import pulley.Streams;
 import pulley.actions.A0;
+import pulley.actions.A1;
 import pulley.actions.Actions;
 import pulley.util.Optional;
 
@@ -100,6 +101,50 @@ public final class F {
             public Result<R> call(T t) {
                 try {
                     return Result.of(f.call(t));
+                } catch (Throwable e) {
+                    return Result.error(e);
+                }
+            }
+        };
+    }
+
+    public static <T, R, S> F1<T, ? extends S> compose(final F1<T, R> f1,
+            final F1<? super R, ? extends S> f2) {
+        return new F1<T, S>() {
+
+            @Override
+            public S call(T t) {
+                return f2.call(f1.call(t));
+            }
+        };
+    }
+
+    public static <T, R> F0<R> compose(final F0<T> f1, final F1<? super T, ? extends R> f2) {
+        return new F0<R>() {
+
+            @Override
+            public R call() {
+                return f2.call(f1.call());
+            }
+        };
+    }
+
+    public static <T> F1<T, T> map(final A1<? super T> action) {
+        return new F1<T, T>() {
+            @Override
+            public T call(T t) {
+                action.call(t);
+                return t;
+            }
+        };
+    }
+
+    public static <T> F0<Result<T>> result(final F0<? extends T> f) {
+        return new F0<Result<T>>() {
+            @Override
+            public Result<T> call() {
+                try {
+                    return Result.<T> of(f.call());
                 } catch (Throwable e) {
                     return Result.error(e);
                 }
