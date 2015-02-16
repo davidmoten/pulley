@@ -49,4 +49,8 @@ public class Result<T> {
         return throwable;
     }
 
+    public boolean hasValue() {
+        return value.isPresent();
+    }
+
 }

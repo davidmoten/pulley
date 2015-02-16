@@ -81,6 +81,7 @@ public class Promises {
             throw new RuntimeException(e);
         }
         return ref.get();
+
     }
 
     public static <T> Promise<Result<T>> result(final Promise<T> promise) {
@@ -104,5 +105,41 @@ public class Promises {
                 return promise.scheduler();
             }
         };
+    }
+
+    public static <T> Result<T> get(final Promise<T> promise, A1<T> action) {
+        PromiseGettingAction<T> a = new PromiseGettingAction<T>(promise, action);
+        promise.scheduler().schedule(a);
+        return a.get();
+    }
+
+    private static class PromiseGettingAction<T> implements A0 {
+
+        volatile Result<T> result = Result.absent();
+        private final Promise<T> promise;
+        private final CountDownLatch latch;
+        private final A1<T> action;
+
+        PromiseGettingAction(Promise<T> promise, A1<T> action) {
+            this.promise = promise;
+            this.action = action;
+            this.latch = new CountDownLatch(1);
+        }
+
+        @Override
+        public void call() {
+            result = Promises.result(promise).get();
+            latch.countDown();
+        }
+
+        public Result<T> get() {
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return result;
+        }
+
     }
 }

@@ -178,4 +178,14 @@ public class Actions {
         };
     }
 
+    public static <T> A0 toA0(final A1<? super T> action, final T t) {
+        return new A0() {
+
+            @Override
+            public void call() {
+                action.call(t);
+            }
+        };
+    }
+
 }
