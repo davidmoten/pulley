@@ -10,4 +10,10 @@ public class Results {
         return new ResultError<T>(t);
     }
 
+    public static <T> T value(Result<T> result) {
+        if (result instanceof ResultValue)
+            return ((ResultValue<T>) result).get();
+        else
+            return Exceptions.throwException(((ResultError<T>) result).get());
+    }
 }
