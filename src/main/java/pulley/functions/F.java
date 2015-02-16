@@ -2,6 +2,8 @@ package pulley.functions;
 
 import pulley.Cons;
 import pulley.Promise;
+import pulley.Result;
+import pulley.Results;
 import pulley.Scheduler;
 import pulley.Schedulers;
 import pulley.Stream;
@@ -72,4 +74,37 @@ public final class F {
         };
     }
 
+    public static <T> Predicate<T> alwaysTrue() {
+        return new Predicate<T>() {
+
+            @Override
+            public Boolean call(T t) {
+                return true;
+            }
+        };
+    }
+
+    public static <T> Predicate<T> alwaysFalse() {
+        return new Predicate<T>() {
+
+            @Override
+            public Boolean call(T t) {
+                return false;
+            }
+        };
+    }
+
+    public static <T, R> F1<T, Result<R>> result(final F1<T, R> f) {
+        return new F1<T, Result<R>>() {
+
+            @Override
+            public Result<R> call(T t) {
+                try {
+                    return Results.result(f.call(t));
+                } catch (Throwable e) {
+                    return Results.error(e);
+                }
+            }
+        };
+    }
 }
