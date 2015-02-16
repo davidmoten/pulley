@@ -1,10 +1,8 @@
 package pulley;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.actions.A0;
-import pulley.functions.F;
 
 public final class Schedulers {
 
@@ -24,22 +22,37 @@ public final class Schedulers {
         return COMPUTATION;
     }
 
-    public static <T> Result<T> getAndJoin(final Promise<T> promise) {
-        final AtomicReference<Result<T>> ref = new AtomicReference<Result<T>>();
-        final CountDownLatch latch = new CountDownLatch(1);
-        promise.scheduler().schedule(new A0() {
+    public static <T> Result<T> get(final Promise<T> promise) {
+        PromiseGettingAction<T> action = new PromiseGettingAction<T>(promise);
+        promise.scheduler().schedule(action);
+        return action.get();
+    }
 
-            @Override
-            public void call() {
-                ref.set(Promises.result(promise).get());
-                latch.countDown();
-            }
-        });
-        try {
-            latch.await();
-            return ref.get();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+    private static class PromiseGettingAction<T> implements A0 {
+
+        volatile Result<T> result = Result.absent();
+        private final Promise<T> promise;
+        private final CountDownLatch latch;
+
+        PromiseGettingAction(Promise<T> promise) {
+            this.promise = promise;
+            this.latch = new CountDownLatch(1);
         }
+
+        @Override
+        public void call() {
+            result = Promises.result(promise).get();
+            latch.countDown();
+        }
+
+        public Result<T> get() {
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return result;
+        }
+
     }
 }
