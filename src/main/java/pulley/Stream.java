@@ -113,10 +113,10 @@ public class Stream<T> {
     }
 
     public static <T> void forEach(Promise<Optional<Cons<T>>> promise, final A1<? super T> action) {
-        Optional<Promise<Optional<Cons<T>>>> p = Optional.of(promise);
+        Result<Promise<Optional<Cons<T>>>> p = Results.result(promise);
         do {
-            p = Promises.performActionAndAwaitCompletion(p.get(), action);
-        } while (p.isPresent());
+            p = Promises.performActionAndAwaitCompletion(Results.value(p), action);
+        } while (p instanceof ResultValue);
     }
 
     public void forEach() {
@@ -127,12 +127,12 @@ public class Stream<T> {
         final Promise<Optional<Cons<T>>> p = factory.create();
         final List<T> list = Collections.synchronizedList(new ArrayList<T>());
         A1<T> addToList = Actions.addToList(list);
-        final Optional<Promise<Optional<Cons<T>>>> p2 = Promises.performActionAndAwaitCompletion(p,
+        final Result<Promise<Optional<Cons<T>>>> p2 = Promises.performActionAndAwaitCompletion(p,
                 addToList);
         if (list.size() == 0) {
             throw new RuntimeException("expected one item but no items emitted");
         } else {
-            Promises.performActionAndAwaitCompletion(p2.get(), addToList);
+            Promises.performActionAndAwaitCompletion(Results.value(p2), addToList);
             if (list.size() > 1)
                 throw new RuntimeException("expected one item but more than one emitted");
             else

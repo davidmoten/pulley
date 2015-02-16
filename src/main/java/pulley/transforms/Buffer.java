@@ -8,6 +8,9 @@ import pulley.AbstractStreamPromise;
 import pulley.Cons;
 import pulley.Promise;
 import pulley.Promises;
+import pulley.Result;
+import pulley.ResultValue;
+import pulley.Results;
 import pulley.Stream;
 import pulley.Transformer;
 import pulley.actions.A1;
@@ -36,17 +39,17 @@ public final class Buffer {
                 public Optional<Cons<List<T>>> get() {
                     final List<T> list = Collections.synchronizedList(new ArrayList<T>());
                     A1<T> addToList = Actions.addToList(list);
-                    Optional<Promise<Optional<Cons<T>>>> p = Optional.of(promise);
+                    Result<Promise<Optional<Cons<T>>>> p = Results.result(promise);
                     do {
-                        p = Promises.performActionAndAwaitCompletion(p.get(), addToList);
-                    } while (p.isPresent() && list.size() < size);
+                        p = Promises.performActionAndAwaitCompletion(Results.value(p), addToList);
+                    } while (p instanceof ResultValue && list.size() < size);
                     if (list.size() == 0)
                         return Optional.absent();
-                    else if (!p.isPresent())
+                    else if (!(p instanceof ResultValue))
                         return Optional.of(Cons.cons(list));
                     else
                         return Optional.of(Cons.cons(list,
-                                BufferTransformer.this.transform(p.get())));
+                                BufferTransformer.this.transform(Results.value(p))));
                 }
 
             };

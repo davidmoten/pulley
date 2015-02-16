@@ -49,24 +49,29 @@ public class Promises {
             return promise;
     }
 
-    public static <T> Optional<Promise<Optional<Cons<T>>>> performActionAndAwaitCompletion(
+    public static <T> Result<Promise<Optional<Cons<T>>>> performActionAndAwaitCompletion(
             final Promise<Optional<Cons<T>>> p, final A1<? super T> action) {
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<Optional<Promise<Optional<Cons<T>>>>> ref = new AtomicReference<Optional<Promise<Optional<Cons<T>>>>>(
+        final AtomicReference<Result<Promise<Optional<Cons<T>>>>> ref = new AtomicReference<Result<Promise<Optional<Cons<T>>>>>(
                 null);
         final A0 a = new A0() {
             @Override
             public void call() {
-                final Optional<Cons<T>> value = p.get();
-                if (value.isPresent()) {
-                    action.call(value.get().head());
-                    ref.set(Optional.of(value.get().tail()));
-                } else {
-                    // TODO only terminating operator should call this
-                    p.closeAction().call();
-                    ref.set(Optional.<Promise<Optional<Cons<T>>>> absent());
+                try {
+                    final Optional<Cons<T>> value = p.get();
+
+                    if (value.isPresent()) {
+                        action.call(value.get().head());
+                        ref.set(Results.result(value.get().tail()));
+                    } else {
+                        // TODO only terminating operator should call this
+                        p.closeAction().call();
+                        ref.set(Results.<Promise<Optional<Cons<T>>>> absent());
+                    }
+                    latch.countDown();
+                } catch (RuntimeException e) {
+                    ref.set(Results.<Promise<Optional<Cons<T>>>> error(e));
                 }
-                latch.countDown();
             }
         };
         p.scheduler().schedule(a);

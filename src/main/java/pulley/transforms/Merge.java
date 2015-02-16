@@ -13,6 +13,9 @@ import pulley.Cons;
 import pulley.Factory;
 import pulley.Promise;
 import pulley.Promises;
+import pulley.Result;
+import pulley.ResultValue;
+import pulley.Results;
 import pulley.Scheduler;
 import pulley.Schedulers;
 import pulley.Stream;
@@ -65,30 +68,34 @@ public class Merge {
 
             // if one item still not found start adding more promises from the
             // stream
-            Optional<Promise<Optional<Cons<Stream<T>>>>> p = Optional.of(streamPromise);
+            Result<Promise<Optional<Cons<Stream<T>>>>> p = Results.result(streamPromise);
             if (!found.get()) {
                 do {
-                    p = Promises.performActionAndAwaitCompletion(p.get(), new A1<Stream<T>>() {
-                        @Override
-                        public void call(Stream<T> stream) {
-                            Promise<Optional<Cons<T>>> q = stream.factory().create();
-                            int newIndex = addToPromises(promises2, q, lock);
-                            getFromPromise(promises2, found, value, latch, completed, newIndex,
-                                    lock);
-                        }
+                    p = Promises.performActionAndAwaitCompletion(Results.value(p),
+                            new A1<Stream<T>>() {
+                                @Override
+                                public void call(Stream<T> stream) {
+                                    Promise<Optional<Cons<T>>> q = stream.factory().create();
+                                    int newIndex = addToPromises(promises2, q, lock);
+                                    getFromPromise(promises2, found, value, latch, completed,
+                                            newIndex, lock);
+                                }
 
-                    });
-                } while (!found.get() && p.isPresent());
+                            });
+                } while (!found.get() && p instanceof ResultValue);
             }
             try {
                 latch.await();
-                if (completed.size() == promises2.size() && !p.isPresent())
+                if (completed.size() == promises2.size() && !(p instanceof ResultValue))
                     return Optional.absent();
                 else {
-                    return Optional.of(Cons.cons(
-                            value.get().get().head(),
-                            new MergePromise2<T>(copyExcluding(promises2, completed), p.or(Promises
-                                    .<Cons<Stream<T>>> empty()))));
+                    Promise<Optional<Cons<Stream<T>>>> p2;
+                    if (p instanceof ResultValue)
+                        p2 = Results.value(p);
+                    else
+                        p2 = Promises.<Cons<Stream<T>>> empty();
+                    return Optional.of(Cons.cons(value.get().get().head(), new MergePromise2<T>(
+                            copyExcluding(promises2, completed), p2)));
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
