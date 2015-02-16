@@ -23,6 +23,14 @@ public class Result<T> {
         return new Result<T>(Optional.<T> absent(), Optional.of(e));
     }
 
+    public static <T> Result<T> absent() {
+        return new Result<T>(Optional.<T> absent(), Optional.<Throwable> absent());
+    }
+
+    public boolean isPresent() {
+        return value.isPresent() || throwable.isPresent();
+    }
+
     public Optional<T> value() {
         if (throwable.isPresent())
             return Exceptions.throwException(throwable.get());

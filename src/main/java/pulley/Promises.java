@@ -62,15 +62,15 @@ public class Promises {
 
                     if (value.isPresent()) {
                         action.call(value.get().head());
-                        ref.set(Results.result(value.get().tail()));
+                        ref.set(Result.of(value.get().tail()));
                     } else {
                         // TODO only terminating operator should call this
                         p.closeAction().call();
-                        ref.set(Results.<Promise<Optional<Cons<T>>>> absent());
+                        ref.set(Result.<Promise<Optional<Cons<T>>>> absent());
                     }
                     latch.countDown();
                 } catch (RuntimeException e) {
-                    ref.set(Results.<Promise<Optional<Cons<T>>>> error(e));
+                    ref.set(Result.<Promise<Optional<Cons<T>>>> error(e));
                 }
             }
         };
@@ -88,9 +88,9 @@ public class Promises {
             @Override
             public Result<T> get() {
                 try {
-                    return Results.result(promise.get());
+                    return Result.of(promise.get());
                 } catch (Throwable e) {
-                    return Results.error(e);
+                    return Result.error(e);
                 }
             }
 
