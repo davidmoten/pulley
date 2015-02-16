@@ -78,4 +78,26 @@ public class Promises {
         return ref.get();
     }
 
+    public static <T> Promise<Result<T>> result(final Promise<T> promise) {
+        return new Promise<Result<T>>() {
+            @Override
+            public Result<T> get() {
+                try {
+                    return Results.result(promise.get());
+                } catch (Throwable e) {
+                    return Results.error(e);
+                }
+            }
+
+            @Override
+            public A0 closeAction() {
+                return promise.closeAction();
+            }
+
+            @Override
+            public Scheduler scheduler() {
+                return promise.scheduler();
+            }
+        };
+    }
 }
