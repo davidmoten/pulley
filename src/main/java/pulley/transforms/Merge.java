@@ -13,8 +13,6 @@ import pulley.Cons;
 import pulley.Factory;
 import pulley.Promise;
 import pulley.Promises;
-import pulley.Result;
-import pulley.ResultValue;
 import pulley.Scheduler;
 import pulley.Schedulers;
 import pulley.Stream;
