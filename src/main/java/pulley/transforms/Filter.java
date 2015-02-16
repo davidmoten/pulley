@@ -5,8 +5,6 @@ import pulley.Cons;
 import pulley.Promise;
 import pulley.Promises;
 import pulley.Result;
-import pulley.ResultValue;
-import pulley.Results;
 import pulley.Stream;
 import pulley.StreamPromise;
 import pulley.Transformer;
@@ -35,15 +33,15 @@ public class Filter {
 
                 @Override
                 public Optional<Cons<T>> get() {
-                    Result<Promise<Optional<Cons<T>>>> p = Results.result(promise);
+                    Result<Promise<Optional<Cons<T>>>> p = Result.of(promise);
                     Latest<T> recorder = Actions.latest();
                     do {
-                        p = Promises.performActionAndAwaitCompletion(Results.value(p), recorder);
-                    } while (p instanceof ResultValue && recorder.get().isPresent()
+                        p = Promises.performActionAndAwaitCompletion(p.value().get(), recorder);
+                    } while (p.isPresent() && recorder.get().isPresent()
                             && !predicate.call(recorder.get().get()));
-                    if (p instanceof ResultValue && recorder.get().isPresent())
+                    if (p.isPresent() && recorder.get().isPresent())
                         return Optional.of(Cons.cons(recorder.get().get(),
-                                FilterTransformer.this.transform(Results.value(p))));
+                                FilterTransformer.this.transform(p.value().get())));
                     else
                         return Optional.absent();
                 }

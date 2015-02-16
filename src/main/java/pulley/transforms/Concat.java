@@ -5,8 +5,6 @@ import pulley.Cons;
 import pulley.Promise;
 import pulley.Promises;
 import pulley.Result;
-import pulley.ResultValue;
-import pulley.Results;
 import pulley.Stream;
 import pulley.StreamPromise;
 import pulley.Transformer;
@@ -37,16 +35,16 @@ public final class Concat {
                     Latest<T> recorder = Actions.latest();
                     Result<Promise<Optional<Cons<T>>>> p = Promises
                             .performActionAndAwaitCompletion(promise, recorder);
-                    if (recorder.get().isPresent() && p instanceof ResultValue)
+                    if (recorder.get().isPresent() && p.isPresent())
                         return Optional.of(Cons.cons(recorder.get().get(),
-                                ConcatTransformer.this.transform(Results.value(p))));
+                                ConcatTransformer.this.transform(p.value().get())));
                     else {
                         Promise<Optional<Cons<T>>> promise2 = stream.factory().create();
                         Latest<T> recorder2 = Actions.latest();
                         Result<Promise<Optional<Cons<T>>>> p2 = Promises
                                 .performActionAndAwaitCompletion(promise2, recorder2);
-                        if (recorder2.get().isPresent() && p2 instanceof ResultValue)
-                            return Optional.of(Cons.cons(recorder2.get().get(), Results.value(p2)));
+                        if (recorder2.get().isPresent() && p2.isPresent())
+                            return Optional.of(Cons.cons(recorder2.get().get(), p2.value().get()));
                         else if (recorder2.get().isPresent())
                             return Optional.of(Cons.cons(recorder2.get().get()));
                         else

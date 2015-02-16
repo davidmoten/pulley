@@ -14,8 +14,6 @@ import pulley.Factory;
 import pulley.Promise;
 import pulley.Promises;
 import pulley.Result;
-import pulley.ResultValue;
-import pulley.Results;
 import pulley.Scheduler;
 import pulley.Schedulers;
 import pulley.Stream;
@@ -68,10 +66,10 @@ public class Merge {
 
             // if one item still not found start adding more promises from the
             // stream
-            Result<Promise<Optional<Cons<Stream<T>>>>> p = Results.result(streamPromise);
+            Result<Promise<Optional<Cons<Stream<T>>>>> p = Result.of(streamPromise);
             if (!found.get()) {
                 do {
-                    p = Promises.performActionAndAwaitCompletion(Results.value(p),
+                    p = Promises.performActionAndAwaitCompletion(p.value().get(),
                             new A1<Stream<T>>() {
                                 @Override
                                 public void call(Stream<T> stream) {
@@ -82,16 +80,16 @@ public class Merge {
                                 }
 
                             });
-                } while (!found.get() && p instanceof ResultValue);
+                } while (!found.get() && p.isPresent());
             }
             try {
                 latch.await();
-                if (completed.size() == promises2.size() && !(p instanceof ResultValue))
+                if (completed.size() == promises2.size() && !(p.isPresent()))
                     return Optional.absent();
                 else {
                     Promise<Optional<Cons<Stream<T>>>> p2;
-                    if (p instanceof ResultValue)
-                        p2 = Results.value(p);
+                    if (p.isPresent())
+                        p2 = p.value().get();
                     else
                         p2 = Promises.<Cons<Stream<T>>> empty();
                     return Optional.of(Cons.cons(value.get().get().head(), new MergePromise2<T>(

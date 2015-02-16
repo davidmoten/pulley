@@ -5,8 +5,6 @@ import pulley.Cons;
 import pulley.Promise;
 import pulley.Promises;
 import pulley.Result;
-import pulley.ResultValue;
-import pulley.Results;
 import pulley.Stream;
 import pulley.Transformer;
 import pulley.actions.Actions;
@@ -36,13 +34,13 @@ public class Take {
                     if (n == 0)
                         return Optional.absent();
                     else {
-                        Result<Promise<Optional<Cons<T>>>> p = Results.result(promise);
+                        Result<Promise<Optional<Cons<T>>>> p = Result.of(promise);
                         Latest<T> recorder = Actions.latest();
-                        p = Promises.performActionAndAwaitCompletion(Results.value(p), recorder);
+                        p = Promises.performActionAndAwaitCompletion(p.value().get(), recorder);
                         if (recorder.get().isPresent()) {
-                            if (p instanceof ResultValue) {
+                            if (p.isPresent()) {
                                 return Optional.of(Cons.cons(recorder.get().get(),
-                                        new TakeTransformer<T>(n - 1).transform(Results.value(p))));
+                                        new TakeTransformer<T>(n - 1).transform(p.value().get())));
                             } else
                                 return Optional.of(Cons.cons(recorder.get().get()));
                         } else

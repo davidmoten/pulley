@@ -3,7 +3,6 @@ package pulley.functions;
 import pulley.Cons;
 import pulley.Promise;
 import pulley.Result;
-import pulley.Results;
 import pulley.Scheduler;
 import pulley.Schedulers;
 import pulley.Stream;
@@ -100,9 +99,9 @@ public final class F {
             @Override
             public Result<R> call(T t) {
                 try {
-                    return Results.result(f.call(t));
+                    return Result.of(f.call(t));
                 } catch (Throwable e) {
-                    return Results.error(e);
+                    return Result.error(e);
                 }
             }
         };

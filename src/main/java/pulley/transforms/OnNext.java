@@ -5,8 +5,6 @@ import pulley.Cons;
 import pulley.Promise;
 import pulley.Promises;
 import pulley.Result;
-import pulley.ResultValue;
-import pulley.Results;
 import pulley.Stream;
 import pulley.Transformer;
 import pulley.actions.A1;
@@ -38,9 +36,9 @@ public class OnNext {
                     A1<T> both = Actions.sequence(latest, action);
                     Result<Promise<Optional<Cons<T>>>> p = Promises
                             .performActionAndAwaitCompletion(promise, both);
-                    if (p instanceof ResultValue && latest.get().isPresent())
+                    if (p.isPresent() && latest.get().isPresent())
                         return Optional.of(Cons.cons(latest.get().get(),
-                                OnNextTransformer.this.transform(Results.value(p))));
+                                OnNextTransformer.this.transform(p.value().get())));
                     else if (latest.get().isPresent())
                         return Optional.of(Cons.cons(latest.get().get()));
                     else
