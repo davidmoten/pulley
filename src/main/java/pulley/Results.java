@@ -16,4 +16,9 @@ public class Results {
         else
             return Exceptions.throwException(((ResultError<T>) result).get());
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> ResultAbsent<T> absent() {
+        return (ResultAbsent<T>) ResultAbsent.instance();
+    }
 }
