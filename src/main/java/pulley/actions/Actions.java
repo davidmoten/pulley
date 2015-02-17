@@ -90,13 +90,15 @@ public class Actions {
         };
     }
 
+    private static final A0 DO_NOTHING = new A0() {
+        @Override
+        public void call() {
+            // do nothing
+        }
+    };
+
     public static A0 doNothing0() {
-        return new A0() {
-            @Override
-            public void call() {
-                // do nothing
-            }
-        };
+        return DO_NOTHING;
     }
 
     public static Runnable toRunnable(final A0 action) {
