@@ -18,7 +18,6 @@ import pulley.actions.Actions;
 import pulley.actions.Actions.Latest;
 import pulley.functions.F;
 import pulley.functions.F1;
-import pulley.functions.F;
 import pulley.functions.Predicate;
 
 public class StreamsTest {
@@ -140,6 +139,12 @@ public class StreamsTest {
             }
         }).toList().single();
         assertEquals(new HashSet<Integer>(source), new HashSet<Integer>(list));
+    }
+
+    @Test(timeout = 2000)
+    public void testFlatMapAsynManyTimes() {
+        for (int i = 0; i < 10; i++)
+            testFlatMapAsynchronous();
     }
 
     // @Test
