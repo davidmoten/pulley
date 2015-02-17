@@ -27,4 +27,13 @@ public class Cons<T> {
         return tail;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Cons [head=");
+        builder.append(head);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

@@ -28,6 +28,16 @@ public class Optional<T> {
             return alternative;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Optional [");
+        if (present)
+            builder.append(value);
+        builder.append("]");
+        return builder.toString();
+    }
+
     public static <T> Optional<T> fromNullable(T t) {
         if (t == null)
             return Optional.absent();

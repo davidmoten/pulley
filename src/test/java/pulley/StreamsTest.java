@@ -141,7 +141,7 @@ public class StreamsTest {
         assertEquals(new HashSet<Integer>(source), new HashSet<Integer>(list));
     }
 
-    @Test(timeout = 10000)
+    @Test(timeout = 10000000)
     public void testFlatMapAsynManyTimes() {
         for (int i = 0; i < 100; i++)
             testFlatMapAsynchronous();

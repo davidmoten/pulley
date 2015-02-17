@@ -9,6 +9,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pulley.Cons;
 import pulley.Factory;
 import pulley.Promise;
@@ -23,6 +26,8 @@ import pulley.actions.A1;
 import pulley.util.Optional;
 
 public class Merge {
+
+    private static final Logger log = LoggerFactory.getLogger(Merge.class);
 
     public static <T> Stream<T> merge(final List<Stream<T>> list) {
         return merge(Streams.from(list));
@@ -115,15 +120,18 @@ public class Merge {
                 final CountDownLatch latch, final ConcurrentSkipListSet<Integer> completed,
                 final int index, final Object lock) {
             Promise<Optional<Cons<T>>> p = promises.get(index);
-            if (!found.get())
+            if (!found.get()) {
+                log.info("scheduling get on " + index);
                 p.scheduler().schedule(new A0() {
                     @Override
                     public void call() {
                         if (!found.get()) {
+                            log.info("getting " + index);
                             Optional<Cons<T>> t = promises.get(index).get();
                             if (t.isPresent() && found.compareAndSet(false, true)) {
                                 value.set(t);
                                 promises.set(index, t.get().tail());
+                                log.info("present so counting down, value=" + value.get());
                                 latch.countDown();
                             } else if (!t.isPresent()) {
                                 completed.add(index);
@@ -136,6 +144,7 @@ public class Merge {
                         }
                     }
                 });
+            }
         }
 
         @Override
