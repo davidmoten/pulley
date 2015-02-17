@@ -23,7 +23,7 @@ public class Range {
 
             @Override
             public Promise<Optional<Cons<Integer>>> create() {
-                return new RangePromise(new AtomicInteger(start), start + count);
+                return new RangePromise(start, start + count - 1);
             }
         };
         return stream(factory);
@@ -31,21 +31,20 @@ public class Range {
 
     private static class RangePromise implements StreamPromise<Integer> {
 
-        private final AtomicInteger n;
         private final int maxValue;
+        private final int n;
 
-        RangePromise(AtomicInteger n, int maxValue) {
+        RangePromise(int n, int maxValue) {
             this.n = n;
             this.maxValue = maxValue;
         }
 
         @Override
         public Optional<Cons<Integer>> get() {
-            int m = n.getAndIncrement();
-            if (m >= maxValue)
+            if (n > maxValue)
                 return Optional.absent();
             else
-                return Optional.of(cons(m, new RangePromise(n, maxValue)));
+                return Optional.of(cons(n, new RangePromise(n + 1, maxValue)));
         }
 
         @Override

@@ -53,4 +53,8 @@ public class Result<T> {
         return value.isPresent();
     }
 
+    public boolean hasError() {
+        return throwable.isPresent();
+    }
+
 }
