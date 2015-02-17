@@ -65,7 +65,8 @@ public class Promises {
                         action.call(value.get().head());
                         ref.set(Result.of(value.get().tail()));
                     } else {
-                        // TODO only terminating operator should call this
+                        // TODO only terminating operator (subscriber?) should
+                        // call this
                         p.closeAction().call();
                         ref.set(Result.<Promise<Optional<Cons<T>>>> absent());
                     }
