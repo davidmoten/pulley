@@ -2,9 +2,6 @@ package pulley.streams;
 
 import static pulley.Cons.cons;
 import static pulley.Stream.stream;
-
-import java.util.concurrent.atomic.AtomicInteger;
-
 import pulley.Cons;
 import pulley.Factory;
 import pulley.Promise;
