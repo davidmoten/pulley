@@ -12,7 +12,7 @@ public class SchedulerDelayed implements Scheduler {
 
 	public SchedulerDelayed(Scheduler scheduler, long delay, TimeUnit unit) {
 		this.scheduler = scheduler;
-		this.delay = delay;
+		this.delay = unit.toMillis(delay);
 		this.unit = unit;
 	}
 
@@ -23,7 +23,8 @@ public class SchedulerDelayed implements Scheduler {
 
 	@Override
 	public void schedule(A0 action, long delay, TimeUnit unit) {
-		scheduler.schedule(action, delay, unit);
+		long totalMs = unit.toMillis(delay) + this.delay;
+		scheduler.schedule(action, totalMs, TimeUnit.MILLISECONDS);
 	}
 
 	@Override

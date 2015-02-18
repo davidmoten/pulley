@@ -330,6 +330,11 @@ public class StreamsTest {
 		assertTrue(System.currentTimeMillis() - t >= 300);
 	}
 
+	// @Test
+	public void testIntervalPrintln() {
+		Streams.interval(1, TimeUnit.SECONDS).forEach(println());
+	}
+
 	@Test
 	public void testIntervalAsynchronous() {
 		long t = System.currentTimeMillis();

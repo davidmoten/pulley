@@ -17,7 +17,8 @@ public class SchedulerComputation implements Scheduler {
 		Scheduler[] workers = new Scheduler[Runtime.getRuntime()
 				.availableProcessors()];
 		for (int i = 0; i < workers.length; i++) {
-			workers[i] = new Worker(Executors.newScheduledThreadPool(1));
+			workers[i] = new Worker(
+					Executors.newSingleThreadScheduledExecutor());
 		}
 		this.workers = workers;
 	}
