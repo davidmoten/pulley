@@ -1,6 +1,7 @@
 package pulley;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import pulley.actions.A0;
@@ -76,7 +77,7 @@ public class Promises {
                 }
             }
         };
-        p.scheduler().schedule(a);
+        p.scheduler().schedule(a, 0, TimeUnit.SECONDS);
         try {
             latch.await();
         } catch (InterruptedException e) {
@@ -106,7 +107,7 @@ public class Promises {
      */
     public static <T> Result<T> get(final Promise<T> promise, A1<T> action) {
         PromiseGettingAction<T> a = new PromiseGettingAction<T>(promise, action);
-        promise.scheduler().schedule(a);
+        promise.scheduler().schedule(a, 0, TimeUnit.SECONDS);
         return a.get();
     }
 

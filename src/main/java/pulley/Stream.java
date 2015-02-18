@@ -52,7 +52,7 @@ public class Stream<T> {
 
             @Override
             public Promise<Optional<Cons<T>>> transform(Promise<Optional<Cons<T>>> promise) {
-                return new ScheduledPromise<Optional<Cons<T>>>(promise, scheduler);
+                return new ScheduledPromise<Optional<Cons<T>>>(promise, scheduler.worker());
             }
         });
     }

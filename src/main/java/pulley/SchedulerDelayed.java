@@ -22,13 +22,12 @@ public class SchedulerDelayed implements Scheduler {
     }
 
     @Override
-    public void schedule(A0 action) {
-        scheduler.schedule(action, delay, unit);
-    }
-
-    @Override
     public void schedule(A0 action, long delay, TimeUnit unit) {
         schedule(action, delay, unit);
     }
 
+    @Override
+    public Scheduler worker() {
+        return new SchedulerDelayed(scheduler.worker(), delay, unit);
+    }
 }

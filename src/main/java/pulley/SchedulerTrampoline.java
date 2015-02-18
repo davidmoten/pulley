@@ -13,8 +13,7 @@ public class SchedulerTrampoline implements Scheduler {
     private final Deque<A0> queue = new ConcurrentLinkedDeque<A0>();
     private final AtomicInteger wip = new AtomicInteger(0);
 
-    @Override
-    public void schedule(A0 action) {
+    private void schedule(A0 action) {
         queue.add(action);
         if (wip.getAndIncrement() == 0) {
             do {
@@ -42,5 +41,10 @@ public class SchedulerTrampoline implements Scheduler {
     @Override
     public long now() {
         return System.currentTimeMillis();
+    }
+
+    @Override
+    public Scheduler worker() {
+        return this;
     }
 }

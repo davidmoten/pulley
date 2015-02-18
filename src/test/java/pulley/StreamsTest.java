@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import pulley.actions.Actions;
@@ -93,25 +94,25 @@ public class StreamsTest {
     @Test
     public void testTrampoline() {
         Scheduler s = Schedulers.trampoline();
-        s.schedule(Actions.log("hello"));
-        s.schedule(Actions.log("world"));
-        s.schedule(Actions.log("from trampoline"));
+        s.schedule(Actions.log("hello"), 0, TimeUnit.SECONDS);
+        s.schedule(Actions.log("world"), 0, TimeUnit.SECONDS);
+        s.schedule(Actions.log("from trampoline"), 0, TimeUnit.SECONDS);
     }
 
     @Test
     public void testImmediate() {
         Scheduler s = Schedulers.immediate();
-        s.schedule(Actions.log("hello"));
-        s.schedule(Actions.log("world"));
-        s.schedule(Actions.log("from immediate"));
+        s.schedule(Actions.log("hello"), 0, TimeUnit.SECONDS);
+        s.schedule(Actions.log("world"), 0, TimeUnit.SECONDS);
+        s.schedule(Actions.log("from immediate"), 0, TimeUnit.SECONDS);
     }
 
     @Test
     public void testComputation() {
         Scheduler s = Schedulers.computation();
-        s.schedule(Actions.log("hello"));
-        s.schedule(Actions.log("world"));
-        s.schedule(Actions.log("from computation"));
+        s.schedule(Actions.log("hello"), 0, TimeUnit.SECONDS);
+        s.schedule(Actions.log("world"), 0, TimeUnit.SECONDS);
+        s.schedule(Actions.log("from computation"), 0, TimeUnit.SECONDS);
     }
 
     @Test
@@ -142,6 +143,7 @@ public class StreamsTest {
     }
 
     @Test(timeout = 10000000)
+    @Ignore
     public void testFlatMapAsynManyTimes() {
         for (int i = 0; i < 100; i++)
             testFlatMapAsynchronous();
