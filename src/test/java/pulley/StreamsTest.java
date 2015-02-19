@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import pulley.actions.Actions;
@@ -91,7 +90,7 @@ public class StreamsTest {
 
 	@Test
 	public void testRange() {
-		Streams.range(1, 1000000).forEach();
+		Streams.range(1, 1000).forEach();
 	}
 
 	@Test
@@ -150,8 +149,7 @@ public class StreamsTest {
 		assertEquals(new HashSet<Integer>(source), new HashSet<Integer>(list));
 	}
 
-	@Test(timeout = 10000000)
-	@Ignore
+	@Test(timeout = 10000)
 	public void testFlatMapAsynManyTimes() {
 		for (int i = 0; i < 100; i++)
 			testFlatMapAsynchronous();

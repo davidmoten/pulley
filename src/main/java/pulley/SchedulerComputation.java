@@ -26,7 +26,6 @@ public class SchedulerComputation implements Scheduler {
 	private static class Worker implements Scheduler {
 
 		private final ScheduledExecutorService executor;
-		private volatile Thread thread = null;
 
 		Worker(ScheduledExecutorService executor) {
 			this.executor = executor;
@@ -34,18 +33,7 @@ public class SchedulerComputation implements Scheduler {
 
 		@Override
 		public void schedule(final A0 action, long delay, TimeUnit unit) {
-			A0 all = new A0() {
-				@Override
-				public void call() {
-					thread = Thread.currentThread();
-					action.call();
-				}
-			};
-			// detect recursion
-			if (Thread.currentThread() == thread)
-				Schedulers.immediate().schedule(action, delay, unit);
-			else
-				executor.schedule(Actions.toRunnable(all), delay, unit);
+			executor.schedule(Actions.toRunnable(action), delay, unit);
 		}
 
 		@Override
