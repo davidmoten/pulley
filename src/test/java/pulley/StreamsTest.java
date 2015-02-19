@@ -335,7 +335,7 @@ public class StreamsTest {
 		Streams.interval(1, TimeUnit.SECONDS).forEach(println());
 	}
 
-	@Test
+	@Test(timeout = 300000000L)
 	public void testIntervalAsynchronous() {
 		long t = System.currentTimeMillis();
 		List<Long> list = Streams.interval(100, TimeUnit.MILLISECONDS).take(3)
