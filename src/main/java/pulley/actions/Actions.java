@@ -15,87 +15,46 @@ public class Actions {
 	private static final Logger log = LoggerFactory.getLogger(Actions.class);
 
 	public static A1<Object> println() {
-		return new A1<Object>() {
-			@Override
-			public void call(Object t) {
-				System.out.println(t);
-			}
-		};
+		return t -> System.out.println(t);
 	}
 
 	public static A0 println(final String s) {
-		return new A0() {
-			@Override
-			public void call() {
-				System.out.println(s);
-			}
-		};
+		return () -> System.out.println(s);
 	}
 
 	public static A0 log(final String s) {
-		return new A0() {
-			@Override
-			public void call() {
-				log.info(s);
-			}
-		};
+		return () -> log.info(s);
 	}
 
 	public static <T> A1<T> log() {
-		return new A1<T>() {
-			@Override
-			public void call(T t) {
-				log.info(String.valueOf(t));
-			}
-		};
+		return t -> log.info(String.valueOf(t));
 	}
 
 	public static <T> A1<T> addToList(final List<T> list) {
-		return new A1<T>() {
-			@Override
-			public void call(T t) {
-				list.add(t);
-			}
-		};
+		return t -> list.add(t);
 	}
 
 	public static A1<Object> doNothing1() {
-		return new A1<Object>() {
-			@Override
-			public void call(Object t) {
-				// do nothing
-			}
+		return t -> {
 		};
 	}
 
 	public static A0 sequence(final A0 action1, final A0 action2) {
-		return new A0() {
-
-			@Override
-			public void call() {
-				action1.call();
-				action2.call();
-			}
+		return () -> {
+			action1.call();
+			action2.call();
 		};
 	}
 
 	public static <T> A1<T> sequence(final A1<? super T> action1,
 			final A1<? super T> action2) {
-		return new A1<T>() {
-
-			@Override
-			public void call(T t) {
-				action1.call(t);
-				action2.call(t);
-			}
+		return t -> {
+			action1.call(t);
+			action2.call(t);
 		};
 	}
 
-	private static final A0 DO_NOTHING = new A0() {
-		@Override
-		public void call() {
-			// do nothing
-		}
+	private static final A0 DO_NOTHING = () -> {
 	};
 
 	public static A0 doNothing0() {
@@ -103,13 +62,7 @@ public class Actions {
 	}
 
 	public static Runnable toRunnable(final A0 action) {
-		return new Runnable() {
-
-			@Override
-			public void run() {
-				action.call();
-			}
-		};
+		return () -> action.call();
 	}
 
 	public static <T> Latest<T> latest() {
@@ -173,23 +126,11 @@ public class Actions {
 	}
 
 	public static A1<Integer> increment(final AtomicInteger i) {
-		return new A1<Integer>() {
-
-			@Override
-			public void call(Integer t) {
-				i.incrementAndGet();
-			}
-		};
+		return t -> i.incrementAndGet();
 	}
 
 	public static <T> A0 toA0(final A1<? super T> action, final T t) {
-		return new A0() {
-
-			@Override
-			public void call() {
-				action.call(t);
-			}
-		};
+		return () -> action.call(t);
 	}
 
 }

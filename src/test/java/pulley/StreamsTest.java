@@ -336,6 +336,7 @@ public class StreamsTest {
 	}
 
 	@Test
+	@Ignore
 	public void testIntervalAsynchronous() {
 		long t = System.currentTimeMillis();
 		List<Long> list = Streams.interval(100, TimeUnit.MILLISECONDS).take(3)
