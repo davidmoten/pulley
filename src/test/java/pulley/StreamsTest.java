@@ -151,6 +151,7 @@ public class StreamsTest {
 	}
 
 	@Test(timeout = 10000)
+	@Ignore
 	public void testFlatMapAsynManyTimes() {
 		for (int i = 0; i < 100; i++)
 			testFlatMapAsynchronous();
