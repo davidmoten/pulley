@@ -19,15 +19,11 @@ public class Interval {
 
 	public static Stream<Long> create(final long delay, final TimeUnit unit,
 			final Scheduler scheduler) {
-		Factory<Promise<Optional<Cons<Long>>>> factory = new Factory<Promise<Optional<Cons<Long>>>>() {
-
-			@Override
-			public Promise<Optional<Cons<Long>>> create() {
-				SchedulerDelayed delayedScheduler = new SchedulerDelayed(
-				// use single threaded scheduler
-						scheduler.worker(), delay, unit);
-				return new IntervalPromise(0, delayedScheduler);
-			}
+		Factory<Promise<Optional<Cons<Long>>>> factory = () -> {
+			SchedulerDelayed delayedScheduler = new SchedulerDelayed(
+			// use single threaded scheduler
+					scheduler.worker(), delay, unit);
+			return new IntervalPromise(0, delayedScheduler);
 		};
 		return stream(factory);
 	}
