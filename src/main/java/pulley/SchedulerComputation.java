@@ -1,5 +1,7 @@
 package pulley;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -10,15 +12,13 @@ import pulley.actions.Actions;
 
 public class SchedulerComputation implements Scheduler {
 
-	private final Scheduler[] workers;
+	private final List<Scheduler> workers;
 	private final AtomicInteger n = new AtomicInteger(0);
 
 	SchedulerComputation() {
-		Scheduler[] workers = new Scheduler[Runtime.getRuntime()
-				.availableProcessors()];
-		for (int i = 0; i < workers.length; i++) {
-			workers[i] = new Worker(
-					Executors.newSingleThreadScheduledExecutor());
+		List<Scheduler> workers = new ArrayList<Scheduler>();
+		for (int i = 0; i < Runtime.getRuntime().availableProcessors(); i++) {
+			workers.add(new Worker(Executors.newSingleThreadScheduledExecutor()));
 		}
 		this.workers = workers;
 	}
@@ -32,7 +32,7 @@ public class SchedulerComputation implements Scheduler {
 		}
 
 		@Override
-		public void schedule(A0 action, long delay, TimeUnit unit) {
+		public void schedule(final A0 action, long delay, TimeUnit unit) {
 			executor.schedule(Actions.toRunnable(action), delay, unit);
 		}
 
@@ -54,12 +54,15 @@ public class SchedulerComputation implements Scheduler {
 
 	@Override
 	public Scheduler worker() {
-		return workers[n.getAndIncrement() % workers.length];
+		return nextWorker();
 	}
 
 	@Override
 	public void schedule(A0 action, long delay, TimeUnit unit) {
-		workers[n.getAndIncrement() % workers.length].schedule(action, delay,
-				unit);
+		nextWorker().schedule(action, delay, unit);
+	}
+
+	private Scheduler nextWorker() {
+		return workers.get(n.getAndIncrement() % workers.size());
 	}
 }

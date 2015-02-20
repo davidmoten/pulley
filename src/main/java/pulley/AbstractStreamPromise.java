@@ -4,20 +4,19 @@ import pulley.actions.A0;
 import pulley.util.Optional;
 
 public abstract class AbstractStreamPromise<T, R> implements StreamPromise<R> {
-    private final Promise<Optional<Cons<T>>> promise;
+	private final Promise<Optional<Cons<T>>> promise;
 
-    public AbstractStreamPromise(Promise<Optional<Cons<T>>> promise) {
-        this.promise = promise;
-    }
+	public AbstractStreamPromise(Promise<Optional<Cons<T>>> promise) {
+		this.promise = promise;
+	}
 
-    @Override
-    public A0 closeAction() {
-        return promise.closeAction();
-    }
+	@Override
+	public A0 closeAction() {
+		return promise.closeAction();
+	}
 
-    @Override
-    public Scheduler scheduler() {
-        return promise.scheduler();
-    }
-
+	@Override
+	public Scheduler scheduler() {
+		return Schedulers.immediate();
+	}
 }

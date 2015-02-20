@@ -42,7 +42,6 @@ public class Reduce {
 					Stream.forEach(promise, action);
 					return Optional.of(Cons.cons(ref.get()));
 				}
-
 			};
 		}
 	}
